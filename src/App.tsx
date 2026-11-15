@@ -111,9 +111,9 @@ export default function App() {
   /* judul dokumen */
   useEffect(() => {
     if (rute.nama === 'baca') {
-      document.title = `Pasal ${rute.pasal} — KUHP Digital`
+      document.title = `Pasal ${rute.pasal} — KUHP Digital by Subhan`
     } else {
-      document.title = `${LABEL_RUTE[rute.nama] ?? 'KUHP Digital'} — KUHP Digital`
+      document.title = `${LABEL_RUTE[rute.nama] ?? 'KUHP Digital by Subhan'} — KUHP Digital by Subhan`
     }
   }, [rute])
 
@@ -127,7 +127,7 @@ export default function App() {
   const judul =
     rute.nama === 'baca' ? `Pasal ${rute.pasal}`
       : rute.nama === 'cari' ? 'Pencarian'
-        : LABEL_RUTE[rute.nama] ?? 'KUHP Digital'
+        : LABEL_RUTE[rute.nama] ?? 'KUHP Digital by Subhan'
 
   return (
     <div className="app" data-sidebar={sidebarBuka ? 'buka' : 'tutup'}>

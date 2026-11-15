@@ -46,7 +46,7 @@ export function Sidebar() {
         </div>
         <div className="grow" style={{ minWidth: 0 }}>
           <div className="brand-name">KUHP <span style={{ color: 'var(--brand-600)' }}>Digital</span></div>
-          <div className="brand-sub">UU No. 1 Tahun 2023</div>
+          <div className="brand-sub" style={{ fontWeight: 650, color: 'var(--brand-700)' }}>by Subhan · UU 1/2023</div>
         </div>
         <button
           className="btn btn-icon btn-ghost drawer-tutup"

@@ -48,7 +48,7 @@ export function Reader({ nomor }: { nomor: number }) {
     if (!pasal) return
     catatBaca(pasal.nomor)
     refAwal.current?.scrollIntoView({ block: 'start' })
-    document.title = `Pasal ${pasal.nomor} — KUHP Digital`
+    document.title = `Pasal ${pasal.nomor} — KUHP Digital by Subhan`
   }, [nomor])
 
   /* navigasi keyboard */
@@ -163,6 +163,13 @@ export function Reader({ nomor }: { nomor: number }) {
         </Tombol>
         <Tombol kecil ikon={<IkonCatatan size={14} />} onClick={() => setCatatanBuka(true)}>
           Catatan
+        </Tombol>
+        <Tombol kecil ikon={<IkonSalin size={14} />} onClick={async () => {
+          const sitasi = `Pasal ${pasal.nomor} Undang-Undang Nomor 1 Tahun 2023 tentang Kitab Undang-Undang Hukum Pidana (Lembaran Negara Republik Indonesia Tahun 2023 Nomor 1, Tambahan Lembaran Negara Republik Indonesia Nomor 6842)`
+          const ok = await salin(sitasi)
+          tampilkanToast(ok ? 'Sitasi formal disalin' : 'Gagal menyalin sitasi', ok ? 'ok' : 'galat')
+        }}>
+          Salin Sitasi
         </Tombol>
         <Tombol kecil ikon={<IkonCetak size={14} />} onClick={() => window.print()}>
           Cetak

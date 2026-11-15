@@ -50,13 +50,13 @@ export function Dashboard() {
           // Lapisan: (1) lapisan gelap di sisi teks agar teks putih ≥4.5:1,
           // (2) cincin cahaya Telegram-blue di kanan, (3) alas gradien pekat.
           background:
-            'linear-gradient(100deg, rgba(8,52,74,.78) 0%, rgba(8,52,74,.55) 38%, rgba(8,52,74,.18) 68%, rgba(8,52,74,0) 100%),'
-            + 'radial-gradient(120% 130% at 88% 6%, rgba(42,171,238,.42) 0%, rgba(42,171,238,.12) 48%, rgba(42,171,238,0) 66%),'
-            + 'radial-gradient(90% 90% at 100% 100%, rgba(42,171,238,.24) 0%, rgba(42,171,238,0) 60%),'
-            + 'linear-gradient(118deg, #0C4460 0%, #14638C 54%, #17749F 100%)',
+            'linear-gradient(105deg, rgba(15,23,42,.86) 0%, rgba(30,58,138,.62) 42%, rgba(30,58,138,.15) 75%, rgba(15,23,42,0) 100%),'
+            + 'radial-gradient(115% 125% at 90% 8%, rgba(245,158,11,.42) 0%, rgba(245,158,11,.14) 45%, rgba(245,158,11,0) 68%),'
+            + 'radial-gradient(95% 95% at 98% 100%, rgba(59,130,246,.32) 0%, rgba(59,130,246,0) 62%),'
+            + 'linear-gradient(120deg, #0F172A 0%, #1E3A8A 52%, #1D4ED8 100%)',
           color: '#fff',
           overflow: 'hidden',
-          boxShadow: '0 10px 30px rgba(10, 59, 84, .22)',
+          boxShadow: '0 12px 32px rgba(15, 23, 42, .28)',
         }}
       >
         <div aria-hidden="true" style={{
@@ -76,9 +76,9 @@ export function Dashboard() {
 
           <h1 style={{
             fontSize: 30, lineHeight: 1.14, fontWeight: 800,
-            letterSpacing: '-.025em', marginBottom: 8, maxWidth: 620,
+            letterSpacing: '-.025em', marginBottom: 8, maxWidth: 680,
           }}>
-            KUHP Digital
+            KUHP Digital <span style={{ color: '#FCD34D', fontWeight: 700, fontSize: '0.82em' }}>by Subhan</span>
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.55, opacity: .93, maxWidth: 540, fontWeight: 500 }}>
             Pusat Referensi Hukum Pidana dalam Satu Genggaman.{' '}
