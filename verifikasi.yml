@@ -1,0 +1,80 @@
+name: Verifikasi
+
+# Dijalankan setiap push ke main dan setiap pull request.
+# Semua langkah di sini sudah diuji lokal sebelum di-commit.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  verifikasi:
+    name: Tipe · Build · Uji
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Pasang dependensi
+        run: npm ci
+
+      - name: Periksa tipe TypeScript
+        run: npx tsc --noEmit
+
+      - name: Validasi data kanonik (39 pemeriksaan)
+        run: python3 tests/validate_canonical.py
+
+      - name: Build produksi
+        run: npm run build
+
+      - name: Build satu berkas
+        run: npm run build:tunggal
+
+      - name: Pastikan berkas tunggal tidak merujuk berkas luar
+        run: |
+          F="dist-tunggal/KUHP-DIGITAL-luring.html"
+          test -f "$F" || { echo "berkas tunggal tidak dihasilkan"; exit 1; }
+          if grep -qE '<(script|link)[^>]+(src|href)="[^"]*\.(js|css)"' "$F"; then
+            echo "GAGAL: berkas tunggal masih merujuk berkas .js/.css luar"
+            exit 1
+          fi
+          echo "OK: berkas tunggal mandiri ($(du -h "$F" | cut -f1))"
+
+      - name: Pasang peramban untuk pengujian
+        run: npx playwright install --with-deps chromium
+
+      - name: Jalankan aplikasi (latar)
+        run: |
+          nohup npx vite preview --host 127.0.0.1 --port 4173 --strictPort > /tmp/preview.log 2>&1 &
+          nohup npx vite --host 127.0.0.1 --port 5173 --strictPort > /tmp/dev.log 2>&1 &
+          npx wait-on http://127.0.0.1:5173 http://127.0.0.1:4173 --timeout 90000
+        # uji aksesibilitas memerlukan build produksi di port 4173 untuk
+        # membuktikan aplikasi tetap terbuka saat jaringan dimatikan.
+
+      - name: Uji kesetiaan redaksi (47)
+        run: node tests/verify_membaca.mjs
+
+      - name: Uji fungsional (57)
+        run: node tests/e2e.mjs
+
+      - name: Uji aksesibilitas & luring (12)
+        run: node tests/aksesibilitas.mjs
+
+      - name: Simpan ringkasan hasil uji
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: hasil-uji
+          path: tests/hasil-e2e.json
+          if-no-files-found: ignore

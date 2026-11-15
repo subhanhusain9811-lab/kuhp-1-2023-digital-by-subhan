@@ -1,0 +1,41 @@
+# ---- dependensi ----
+node_modules/
+.pnp
+.pnp.js
+
+# ---- hasil build (dibangun ulang, tidak perlu masuk repo) ----
+dist/
+dist-tunggal/
+
+# ---- cache & temp ----
+.cache/
+.vite/
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ---- editor ----
+.vscode/*
+!.vscode/extensions.json
+.idea/
+
+# ---- rahasia (JANGAN pernah di-commit) ----
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.p12
+.netrc
+.git-credentials
+
+# ---- berkas lokakarya (di luar repo aplikasi) ----
+/shots/
+*.zip
+
+# ---- keluaran pengujian (dibuat saat run) ----
+tests/hasil-e2e.json
