@@ -7,7 +7,7 @@ import { useMemo, useState } from 'react'
 import { db } from '@/lib/data'
 import { useStore } from '@/store/useStore'
 import { klasifikasi, faktorPidana, TOPIK, type Topik } from './relasi'
-import { htmlKeTeks } from '@/lib/format'
+import { htmlKeTeks, DENDA_KATEGORI, rupiah, angkaId, ringkasAncaman } from '@/lib/format'
 import { Kartu, Chip, Tombol, Kosong, Label, Segmen } from '@/components/ui'
 import {
   IkonPemetaan, IkonSaring, IkonKanan, IkonPalu, IkonTopik,
@@ -15,7 +15,7 @@ import {
 } from '@/components/Ikon'
 import type { Pasal } from '@/lib/types'
 
-type Modus = 'topik' | 'unsur' | 'ancaman' | 'subjek' | 'faktor'
+type Modus = 'topik' | 'unsur' | 'ancaman' | 'subjek' | 'faktor' | 'konversi' | 'kalkulator'
 
 const FILTER_UNSUR = [
   { id: 'sengaja', label: 'Kesengajaan', tipe: 'subjektif' },
@@ -47,6 +47,50 @@ const FILTER_ANCAMAN = [
 ]
 
 const FILTER_SUBJEK = ['Setiap Orang', 'Pejabat', 'Korporasi', 'Nakhoda', 'Ibu', 'Anak', 'Pengurus / komisaris']
+
+const KONVERSI_WVS: {
+  wvs: string
+  delik: string
+  baru: number
+  catatan: string
+}[] = [
+  { wvs: 'Pasal 1 ayat (1)', delik: 'Asas Legalitas', baru: 1, catatan: 'Diperluas dengan pengakuan hukum yang hidup dalam masyarakat (Pasal 2)' },
+  { wvs: 'Pasal 1 ayat (2)', delik: 'Aturan Peralihan / Lex Mitior', baru: 3, catatan: 'Diterapkan ketentuan yang paling menguntungkan bagi terdakwa/tersangka' },
+  { wvs: 'Pasal 55', delik: 'Penyertaan / Turut Serta (Deelneming)', baru: 20, catatan: 'Pelaku, menyuruh melakukan, turut serta, dan penganjur' },
+  { wvs: 'Pasal 56', delik: 'Pembantuan Tindak Pidana (Medeplichtigheid)', baru: 21, catatan: 'Pidana pembantu dikurangi 1/3 dari ancaman pidana pokok' },
+  { wvs: 'Pasal 63', delik: 'Perbarengan Peraturan (Concursus Idealis)', baru: 125, catatan: 'Dijatuhi 1 pidana pokok yang paling berat; lex specialis berlaku' },
+  { wvs: 'Pasal 64', delik: 'Perbuatan Berlanjut (Voorgezette Handeling)', baru: 126, catatan: 'Beberapa tindak pidana berlanjut dijatuhi 1 pidana pokok terberat' },
+  { wvs: 'Pasal 65', delik: 'Perbarengan Perbuatan (Concursus Realis)', baru: 127, catatan: 'Akumulasi terbatas: maksimum pidana terberat ditambah 1/3' },
+  { wvs: 'Pasal 78', delik: 'Gugurnya Penuntutan karena Daluwarsa', baru: 136, catatan: 'Tenggang waktu 3, 6, 12, 18, atau 20 tahun sesuai ancaman pidana' },
+  { wvs: 'Pasal 156a', delik: 'Tindak Pidana terhadap Agama / Kepercayaan', baru: 300, catatan: 'Permusuhan, kebencian, atau penghasutan terhadap agama/kepercayaan' },
+  { wvs: 'Pasal 170', delik: 'Kekerasan Bersama-sama di Muka Umum (Pengeroyokan)', baru: 262, catatan: 'Dengan tenaga bersama melakukan kekerasan terhadap orang atau barang' },
+  { wvs: 'Pasal 242', delik: 'Keterangan Palsu di Atas Sumpah', baru: 291, catatan: 'Memberikan keterangan palsu di atas sumpah dalam proses peradilan' },
+  { wvs: 'Pasal 263', delik: 'Pemalsuan Surat Biasa', baru: 391, catatan: 'Membuat secara tidak benar atau memalsu surat yang menimbulkan hak/perikatan' },
+  { wvs: 'Pasal 264', delik: 'Pemalsuan Akta Autentik / Surat Berharga', baru: 392, catatan: 'Pemalsuan terhadap akta autentik, surat utang, atau sertifikat' },
+  { wvs: 'Pasal 266', delik: 'Menyuruh Memasukkan Keterangan Palsu ke Akta Autentik', baru: 394, catatan: 'Meminta dimasukkan keterangan palsu ke dalam akta autentik' },
+  { wvs: 'Pasal 284', delik: 'Perzinaan (Overspel)', baru: 411, catatan: 'Delik aduan absolut (suami/istri, atau orang tua/anak bagi yang tidak terikat perkawinan)' },
+  { wvs: 'Pasal 285', delik: 'Perkosaan', baru: 473, catatan: 'Diatur dalam Bab Tindak Pidana terhadap Tubuh dengan perluasan cakupan' },
+  { wvs: 'Pasal 310', delik: 'Penyerangan Kehormatan / Pencemaran Nama Baik', baru: 433, catatan: 'Menuduhkan suatu hal dengan lisan atau tulisan agar diketahui umum' },
+  { wvs: 'Pasal 311', delik: 'Fitnah (Laster)', baru: 434, catatan: 'Tidak dapat membuktikan kebenaran tuduhan yang bertentangan dengan yang diketahui' },
+  { wvs: 'Pasal 315', delik: 'Penghinaan Ringan (Lichte Belediging)', baru: 436, catatan: 'Penghinaan yang tidak bersifat pencemaran lisan/tertulis' },
+  { wvs: 'Pasal 335', delik: 'Pemaksaan Secara Melawan Hukum', baru: 448, catatan: 'Memaksa orang lain melakukan/tidak melakukan sesuatu dengan kekerasan/ancaman' },
+  { wvs: 'Pasal 338', delik: 'Pembunuhan Biasa (Doodslag)', baru: 458, catatan: 'Merampas nyawa orang lain, ancaman penjara paling lama 15 tahun' },
+  { wvs: 'Pasal 340', delik: 'Pembunuhan Berencana (Moord)', baru: 459, catatan: 'Dengan rencana terlebih dahulu merampas nyawa orang lain' },
+  { wvs: 'Pasal 351', delik: 'Penganiayaan (Mishandeling)', baru: 466, catatan: 'Penganiayaan umum, luka berat, atau mengakibatkan mati' },
+  { wvs: 'Pasal 354', delik: 'Penganiayaan Berat (Zware Mishandeling)', baru: 468, catatan: 'Melukai berat orang lain dengan sengaja' },
+  { wvs: 'Pasal 359 / 360', delik: 'Kealpaan Mengakibatkan Mati atau Luka (Culpa)', baru: 474, catatan: 'Pemberatan +1/3 diatur pada Pasal 475 (padanan Pasal 361 WvS) jika dalam jabatan/profesi' },
+  { wvs: 'Pasal 362', delik: 'Pencurian Biasa (Diefstal)', baru: 476, catatan: 'Mengambil barang milik orang lain dengan maksud dimiliki secara melawan hukum' },
+  { wvs: 'Pasal 363', delik: 'Pencurian dengan Pemberatan (Curat)', baru: 477, catatan: 'Malam hari, bencana, bersama-sama, atau merusak/membongkar' },
+  { wvs: 'Pasal 365', delik: 'Pencurian dengan Kekerasan (Curas)', baru: 479, catatan: 'Didahului, disertai, atau diikuti kekerasan/ancaman kekerasan' },
+  { wvs: 'Pasal 368', delik: 'Pemerasan (Afpersing)', baru: 482, catatan: 'Memaksa menyerahkan barang atau memberi utang/menghapus piutang dengan kekerasan' },
+  { wvs: 'Pasal 372', delik: 'Penggelapan (Verduistering)', baru: 486, catatan: 'Memiliki secara melawan hukum barang dalam kekuasaannya bukan karena tindak pidana' },
+  { wvs: 'Pasal 378', delik: 'Penipuan / Perbuatan Curang (Oplichting)', baru: 492, catatan: 'Nama/kedudukan palsu, tipu muslihat, atau rangkaian kata bohong' },
+  { wvs: 'Pasal 406', delik: 'Perusakan Barang (Vernieling)', baru: 521, catatan: 'Merusak, menghancurkan, membuat tidak dapat dipakai, atau menghilangkan barang' },
+  { wvs: 'Pasal 480', delik: 'Penadahan (Heling)', baru: 591, catatan: 'Membeli, menyewa, menerima gadai, atau menyimpan barang hasil tindak pidana' },
+  { wvs: 'UU Tipikor Ps. 2', delik: 'Korupsi Merugikan Keuangan Negara', baru: 603, catatan: 'Memperkaya diri/orang lain/korporasi secara melawan hukum yang merugikan keuangan negara' },
+  { wvs: 'UU Tipikor Ps. 3', delik: 'Korupsi Penyalahgunaan Kewenangan', baru: 604, catatan: 'Menyalahgunakan kewenangan, kesempatan, atau sarana jabatan/kedudukan' },
+]
+
 
 export function MappingPage() {
   const navigasi = useStore(s => s.navigasi)
@@ -142,10 +186,20 @@ export function MappingPage() {
             { nilai: 'ancaman', label: 'Ancaman' },
             { nilai: 'subjek', label: 'Subjek Hukum' },
             { nilai: 'faktor', label: 'Pemberat/Peringan' },
+            { nilai: 'konversi', label: 'Konversi KUHP Lama' },
+            { nilai: 'kalkulator', label: 'Kalkulator Pidana' },
           ]}
           onUbah={m => { setModus(m); reset() }}
         />
-        {adaFilter && (
+        {modus === 'konversi' && (
+        <PanelKonversiWvs onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} />
+      )}
+
+      {modus === 'kalkulator' && (
+        <PanelKalkulatorPidana onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} />
+      )}
+
+      {adaFilter && (
           <Tombol kecil ikon={<IkonFilterX size={13} />} onClick={reset}>Reset saringan</Tombol>
         )}
       </div>
@@ -309,6 +363,14 @@ export function MappingPage() {
         </Kartu>
       )}
 
+      {modus === 'konversi' && (
+        <PanelKonversiWvs onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} />
+      )}
+
+      {modus === 'kalkulator' && (
+        <PanelKalkulatorPidana onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} />
+      )}
+
       {adaFilter && (
         <>
           <div style={{
@@ -390,6 +452,237 @@ export function MappingPage() {
           pasal tersebut tidak dimasukkan ke kategori terkait. Ringkasan ancaman dibaca dari ketentuan
           pidana yang tercantum pada pasal itu sendiri, dengan kategori denda mengacu pada Pasal 79.
         </p>
+      </Kartu>
+    </div>
+  )
+}
+
+
+function PanelKonversiWvs({ onBukaPasal }: { onBukaPasal: (n: number) => void }) {
+  const [cariWvs, setCariWvs] = useState('')
+  const daftar = useMemo(() => {
+    const t = cariWvs.trim().toLowerCase()
+    if (!t) return KONVERSI_WVS
+    return KONVERSI_WVS.filter(x =>
+      x.wvs.toLowerCase().includes(t) ||
+      x.delik.toLowerCase().includes(t) ||
+      String(x.baru).includes(t) ||
+      x.catatan.toLowerCase().includes(t)
+    )
+  }, [cariWvs])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <Kartu>
+        <div className="row-gap" style={{ marginBottom: 10, flexWrap: 'wrap' }}>
+          <IkonPemetaan size={15} style={{ color: 'var(--brand-700)' }} />
+          <Label>Padanan KUHP Lama (WvS) ke UU No. 1 Tahun 2023</Label>
+          <Chip nada="brand">{daftar.length} padanan populer</Chip>
+        </div>
+        <div className="topbar-cari" style={{ maxWidth: 460 }}>
+          <IkonCari size={15} className="ikon-cari" />
+          <input
+            className="input"
+            value={cariWvs}
+            onChange={e => setCariWvs(e.target.value)}
+            placeholder="Ketik nomor pasal lama (mis. 362, 378, 263, 55) atau nama delik…"
+            style={{ paddingLeft: 34 }}
+          />
+        </div>
+      </Kartu>
+
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+        {daftar.map(item => {
+          const pBaru = db.get(item.baru)
+          return (
+            <div key={item.wvs + item.baru} className="card" style={{ padding: '12px 14px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+                <Chip nada="warn">{item.wvs} (WvS)</Chip>
+                <IkonKanan size={13} style={{ color: 'var(--muted)' }} />
+                <button
+                  onClick={() => onBukaPasal(item.baru)}
+                  style={{ fontSize: 14, fontWeight: 800, color: 'var(--brand-700)' }}
+                >
+                  Pasal {item.baru} (UU 1/2023)
+                </button>
+                <span style={{ fontSize: 13, fontWeight: 750 }}>{item.delik}</span>
+                <span className="spacer" />
+                <Tombol kecil onClick={() => onBukaPasal(item.baru)}>Buka Pasal {item.baru}</Tombol>
+              </div>
+              <div style={{ fontSize: 12, color: 'var(--muted)', marginBottom: 6 }}>
+                <b>Catatan perubahan:</b> {item.catatan}
+              </div>
+              {pBaru && (
+                <div style={{
+                  padding: '8px 10px', borderRadius: 8, background: 'var(--surface-2)',
+                  border: '1px solid var(--border)', fontSize: 12, fontFamily: 'var(--font-doc)',
+                  color: 'var(--text-soft)', lineHeight: 1.55,
+                }}>
+                  {htmlKeTeks(pBaru.teks)}
+                  <div style={{ fontFamily: 'var(--font-ui)', fontSize: 11, color: 'var(--brand-700)', fontWeight: 650, marginTop: 4 }}>
+                    Ancaman UU 1/2023: {ringkasAncaman(pBaru)}
+                  </div>
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
+    </div>
+  )
+}
+
+function PanelKalkulatorPidana({ onBukaPasal }: { onBukaPasal: (n: number) => void }) {
+  const [sub, setSub] = useState<'denda' | 'perbarengan' | 'daluwarsa'>('denda')
+  const [kat, setKat] = useState<string>('II')
+  const [dendaInput, setDendaInput] = useState<string>('10000000')
+  const [terbayarInput, setTerbayarInput] = useState<string>('0')
+  const [p1, setP1] = useState<number>(5)
+  const [p2, setP2] = useState<number>(4)
+  const [katDal, setKatDal] = useState<'a' | 'b' | 'c' | 'd' | 'e'>('c')
+  const [tglDelik, setTglDelik] = useState<string>(new Date().toISOString().slice(0, 10))
+  const [anak, setAnak] = useState<boolean>(false)
+
+  const nominal = Math.max(0, parseInt(dendaInput.replace(/\D/g, ''), 10) || 0)
+  const dibayar = Math.min(nominal, Math.max(0, parseInt(terbayarInput.replace(/\D/g, ''), 10) || 0))
+  const sisa = Math.max(0, nominal - dibayar)
+  const unit = sisa > 0 ? Math.ceil(sisa / 50_000) : 0
+  const bisaGanti = nominal <= DENDA_KATEGORI.II
+
+  const terberat = Math.max(p1, p2)
+  const jumlahPidana = p1 + p2
+  const batasRealis = +(terberat + terberat / 3).toFixed(2)
+  const maksRealis = Math.min(jumlahPidana, batasRealis)
+
+  const tahunDal = { a: 3, b: 6, c: 12, d: 18, e: 20 }[katDal]
+  const bulanDal = anak ? Math.round((tahunDal * 12) / 3) : tahunDal * 12
+  const tglGugur = useMemo(() => {
+    const d = new Date(tglDelik + 'T00:00:00')
+    if (Number.isNaN(d.getTime())) return '—'
+    d.setDate(d.getDate() + 1)
+    d.setMonth(d.getMonth() + bulanDal)
+    return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })
+  }, [tglDelik, bulanDal])
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <Kartu>
+        <div className="row-gap" style={{ marginBottom: 12, flexWrap: 'wrap' }}>
+          <IkonPalu size={15} style={{ color: 'var(--brand-700)' }} />
+          <Label>Kalkulator Pidana Buku Kesatu UU No. 1 Tahun 2023</Label>
+          <span className="spacer" />
+          <Segmen<'denda' | 'perbarengan' | 'daluwarsa'>
+            nilai={sub}
+            opsi={[
+              { nilai: 'denda', label: 'Denda & Pengganti (Ps. 79 & 82)' },
+              { nilai: 'perbarengan', label: 'Perbarengan (Ps. 125–127)' },
+              { nilai: 'daluwarsa', label: 'Daluwarsa (Ps. 136–137)' },
+            ]}
+            onUbah={setSub}
+          />
+        </div>
+
+        {sub === 'denda' && (
+          <div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(135px, 1fr))', gap: 7, marginBottom: 12 }}>
+              {Object.entries(DENDA_KATEGORI).map(([k, v]) => (
+                <button
+                  key={k}
+                  onClick={() => { setKat(k); setDendaInput(String(v)) }}
+                  style={{
+                    textAlign: 'left', padding: '8px 10px', borderRadius: 8,
+                    border: `1.5px solid ${kat === k ? 'var(--brand-500)' : 'var(--border)'}`,
+                    background: kat === k ? 'var(--brand-50)' : 'var(--surface-2)',
+                  }}
+                >
+                  <div style={{ fontSize: 11.5, fontWeight: 750 }}>Kategori {k}</div>
+                  <div className="mono" style={{ fontSize: 11, color: 'var(--muted)' }}>{rupiah(v)}</div>
+                </button>
+              ))}
+            </div>
+            <div className="grid-2" style={{ gap: 10, marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 4 }}>Denda dijatuhkan (Rp)</div>
+                <input className="input mono" value={dendaInput} onChange={e => setDendaInput(e.target.value)} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 4 }}>Telah dibayar (Rp)</div>
+                <input className="input mono" value={terbayarInput} onChange={e => setTerbayarInput(e.target.value)} />
+              </div>
+            </div>
+            <div style={{ padding: 12, borderRadius: 9, background: 'var(--surface-2)', border: '1px solid var(--border)', fontSize: 12.5 }}>
+              {!bisaGanti ? (
+                <span>Denda di atas <b>Kategori II ({rupiah(DENDA_KATEGORI.II)})</b> tidak diganti penjara/kerja sosial, melainkan dieksekusi melalui sita &amp; lelang kekayaan/pendapatan (Pasal 81 ayat (3) &amp; Pasal 82 ayat (1)).</span>
+              ) : (
+                <span>Sisa denda <b>{rupiah(sisa)}</b> setara <b>{angkaId(unit)} unit</b> (@Rp50.000 per Pasal 82 ayat (4)) → Pidana penjara/pengawasan pengganti: <b>{Math.min(365, Math.max(sisa > 0 ? 30 : 0, unit))} hari</b> atau kerja sosial pengganti: <b>{Math.min(240, Math.max(sisa > 0 ? 8 : 0, unit))} jam</b>.</span>
+              )}
+              <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                <Tombol kecil onClick={() => onBukaPasal(79)}>Buka Pasal 79</Tombol>
+                <Tombol kecil onClick={() => onBukaPasal(82)}>Buka Pasal 82</Tombol>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {sub === 'perbarengan' && (
+          <div>
+            <div className="grid-2" style={{ gap: 10, marginBottom: 12 }}>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 4 }}>Ancaman Tindak Pidana 1 (tahun)</div>
+                <input className="input mono" type="number" min={0} max={20} value={p1} onChange={e => setP1(Math.max(0, Number(e.target.value) || 0))} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 4 }}>Ancaman Tindak Pidana 2 (tahun)</div>
+                <input className="input mono" type="number" min={0} max={20} value={p2} onChange={e => setP2(Math.max(0, Number(e.target.value) || 0))} />
+              </div>
+            </div>
+            <div style={{ padding: 12, borderRadius: 9, background: 'var(--surface-2)', border: '1px solid var(--border)', fontSize: 12.5, lineHeight: 1.6 }}>
+              <div>• <b>Concursus Idealis (Pasal 125) / Perbuatan Berlanjut (Pasal 126):</b> Maksimum <b>{terberat} tahun</b> (1 pidana pokok terberat).</div>
+              <div>• <b>Concursus Realis (Pasal 127 ayat (2)):</b> Maksimum <b>{maksRealis} tahun</b> (jumlah ancaman {jumlahPidana} tahun, dibatasi terberat + 1/3 yaitu {batasRealis} tahun).</div>
+              <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                <Tombol kecil onClick={() => onBukaPasal(125)}>Pasal 125</Tombol>
+                <Tombol kecil onClick={() => onBukaPasal(126)}>Pasal 126</Tombol>
+                <Tombol kecil onClick={() => onBukaPasal(127)}>Pasal 127</Tombol>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {sub === 'daluwarsa' && (
+          <div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 12 }}>
+              {([
+                ['a', 'Ancaman penjara ≤ 1 tahun atau denda ≤ Kategori III → Daluwarsa 3 tahun'],
+                ['b', 'Ancaman penjara > 1 tahun s.d. 3 tahun → Daluwarsa 6 tahun'],
+                ['c', 'Ancaman penjara > 3 tahun s.d. 7 tahun → Daluwarsa 12 tahun'],
+                ['d', 'Ancaman penjara > 7 tahun s.d. 15 tahun → Daluwarsa 18 tahun'],
+                ['e', 'Ancaman penjara 20 tahun, seumur hidup, atau pidana mati → Daluwarsa 20 tahun'],
+              ] as const).map(([id, ket]) => (
+                <label key={id} style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12.5, cursor: 'pointer' }}>
+                  <input type="radio" checked={katDal === id} onChange={() => setKatDal(id)} />
+                  <span><b>Huruf {id}:</b> {ket}</span>
+                </label>
+              ))}
+            </div>
+            <div className="grid-2" style={{ gap: 10, marginBottom: 12, alignItems: 'end' }}>
+              <div>
+                <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 4 }}>Tanggal Perbuatan (Tempus Delicti)</div>
+                <input className="input" type="date" value={tglDelik} onChange={e => setTglDelik(e.target.value)} />
+              </div>
+              <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12.5, cursor: 'pointer', paddingBottom: 8 }}>
+                <input type="checkbox" checked={anak} onChange={e => setAnak(e.target.checked)} />
+                Pelaku Anak (dikurangi menjadi 1/3 per Pasal 136 ayat (2))
+              </label>
+            </div>
+            <div style={{ padding: 12, borderRadius: 9, background: 'var(--brand-50)', border: '1px solid var(--brand-200)', fontSize: 12.5 }}>
+              Tenggang daluwarsa: <b>{bulanDal / 12} tahun</b> (dihitung keesokan harinya per Pasal 137) → Kewenangan penuntutan gugur mulai <b>{tglGugur}</b>.
+              <div style={{ marginTop: 8, display: 'flex', gap: 6 }}>
+                <Tombol kecil onClick={() => onBukaPasal(136)}>Buka Pasal 136</Tombol>
+                <Tombol kecil onClick={() => onBukaPasal(137)}>Buka Pasal 137</Tombol>
+              </div>
+            </div>
+          </div>
+        )}
       </Kartu>
     </div>
   )
