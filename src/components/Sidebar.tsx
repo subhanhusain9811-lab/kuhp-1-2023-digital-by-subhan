@@ -79,6 +79,9 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-foot">
+        <div style={{ fontSize: 10, color: 'var(--muted)', lineHeight: 1.45, marginBottom: 6, opacity: .88 }}>
+          Karya: <b>subhan_jago</b> (murid langsung dari Opah R. Yapari [Nenek Ompong, Penguasa Waktu] dan Kak Budi Gagah [Toreng])
+        </div>
         <div className="verifikasi-pill">
           <IkonPerisai size={14} style={{ flex: 'none', marginTop: 1 }} />
           <span>

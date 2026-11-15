@@ -7,7 +7,7 @@ import { penyediaLokal, LABEL_PERAN, CONTOH_TUGAS, deteksiTugas, type JawabanAI,
 import { Kartu, Chip, Tombol, Label } from '@/components/ui'
 import {
   IkonAsisten, IkonPetir, IkonPerisai, IkonInfo, IkonPeringatan,
-  IkonKanan, IkonSalin, IkonTarget, IkonTutup,
+  IkonKanan, IkonSalin, IkonTarget, IkonTutup, IkonTambah, IkonSkala,
 } from '@/components/Ikon'
 import { salin } from '@/lib/storage'
 
@@ -124,7 +124,7 @@ export function AssistantPage() {
 
       {/* Jawaban */}
       <div ref={refHasil}>
-        {jawaban && !proses && <TampilanJawaban a={jawaban} onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} toast={tampilkanToast} />}
+        {jawaban && !proses && <TampilanJawaban a={jawaban} q={input} onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} onBukaAnalisis={id => navigasi({ nama: 'analisis', id })} toast={tampilkanToast} />}
       </div>
 
       {/* Riwayat sesi */}
@@ -147,6 +147,9 @@ export function AssistantPage() {
         </>
       )}
 
+      {/* Panduan Interaktif Tempus Delicti & Asas Lex Mitior */}
+      <PanduanLexMitior onBukaPasal={n => navigasi({ nama: 'baca', pasal: n })} />
+
       {/* Info penyedia */}
       <Kartu style={{ marginTop: 20, background: 'var(--surface-2)' }}>
         <div className="row-gap" style={{ marginBottom: 8 }}>
@@ -166,8 +169,31 @@ export function AssistantPage() {
 }
 
 function TampilanJawaban({
-  a, onBukaPasal, toast,
-}: { a: JawabanAI; onBukaPasal: (n: number) => void; toast: (m: string, j?: 'ok' | 'info' | 'galat') => void }) {
+  a, q, onBukaPasal, onBukaAnalisis, toast,
+}: {
+  a: JawabanAI
+  q: string
+  onBukaPasal: (n: number) => void
+  onBukaAnalisis: (id: string) => void
+  toast: (m: string, j?: 'ok' | 'info' | 'galat') => void
+}) {
+  const simpanKeAnalisis = () => {
+    const buatAnalisis = useStore.getState().buatAnalisis
+    const ubahAnalisis = useStore.getState().ubahAnalisis
+    const pasalSet = new Set<number>()
+    for (const b of a.blok) {
+      for (const n of b.pasal ?? []) pasalSet.add(n)
+      for (const k of b.kutipan ?? []) pasalSet.add(k.pasal)
+    }
+    const id = buatAnalisis(a.judul || 'Analisis dari Asisten Hukum', q.trim())
+    const ringkasan = a.blok.map(b => `[${b.judul}]\n${b.isi}`).join('\n\n')
+    ubahAnalisis(id, {
+      pasalTerkait: [...pasalSet].sort((x, y) => x - y),
+      catatan: ringkasan,
+    })
+    toast('Disimpan ke Ruang Analisis')
+    onBukaAnalisis(id)
+  }
   const teksLengkap = () => {
     const baris: string[] = [`# ${a.judul}`, '']
     for (const b of a.blok) {
@@ -187,6 +213,9 @@ function TampilanJawaban({
         {a.dasarKosong && <Chip nada="warn" ikon={<IkonPeringatan size={10} />}>dasar tidak ditemukan</Chip>}
         <span className="spacer" />
         <span style={{ fontSize: 10.5, color: 'var(--muted)', fontWeight: 650 }}>{a.waktu} ms</span>
+        <Tombol kecil nada="primary" ikon={<IkonTambah size={12} />} onClick={simpanKeAnalisis}>
+          Jadikan Berkas Analisis
+        </Tombol>
         <Tombol kecil nada="ghost" ikon={<IkonSalin size={12} />} onClick={async () => {
           const ok = await salin(teksLengkap())
           toast(ok ? 'Jawaban disalin' : 'Gagal menyalin', ok ? 'ok' : 'galat')
@@ -260,5 +289,96 @@ function TampilanJawaban({
         })}
       </div>
     </div>
+  )
+}
+
+function PanduanLexMitior({ onBukaPasal }: { onBukaPasal: (n: number) => void }) {
+  const [tempus, setTempus] = useState<'sebelum' | 'sesudah'>('sebelum')
+  const [statusPerkara, setStatusPerkara] = useState<'proses' | 'inkracht'>('proses')
+  const [perubahan, setPerubahan] = useState<'untung_baru' | 'untung_lama' | 'hapus'>('untung_baru')
+
+  const rekomendasi = () => {
+    if (tempus === 'sesudah') {
+      return {
+        judul: 'Berlaku Penuh UU No. 1 Tahun 2023 (Asas Legalitas — Pasal 1 ayat (1))',
+        uraian: 'Karena perbuatan (tempus delicti) dilakukan sejak atau setelah 2 Januari 2026 (3 tahun sejak diundangkan sesuai Pasal 624), maka ketentuan UU No. 1 Tahun 2023 berlaku sepenuhnya.',
+        pasal: [1, 624],
+      }
+    }
+    if (perubahan === 'hapus') {
+      return {
+        judul: 'Proses Dihentikan / Pidana Hapus demi Hukum (Pasal 3 ayat (2) & (3))',
+        uraian: 'Apabila menurut UU baru perbuatan tersebut tidak lagi merupakan Tindak Pidana, maka proses hukum terhadap Tersangka/Terdakwa dihentikan demi hukum (Pasal 3 ayat (2)), dan jika sudah menjalani pidana maka pelaksanaan pidana dihapuskan (Pasal 3 ayat (3)).',
+        pasal: [3, 618],
+      }
+    }
+    if (statusPerkara === 'inkracht') {
+      return {
+        judul: 'Putusan Tetap (Inkracht) & Penyesuaian Pidana (Pasal 3)',
+        uraian: 'Untuk putusan pemidanaan yang telah berkekuatan hukum tetap sebelum perubahan UU, pelaksanaan pidana tetap berjalan kecuali jika perbuatan tidak lagi merupakan tindak pidana (Pasal 3 ayat (3)).',
+        pasal: [3, 618],
+      }
+    }
+    if (perubahan === 'untung_baru') {
+      return {
+        judul: 'Diterapkan Ketentuan UU No. 1 Tahun 2023 (Asas Lex Mitior — Pasal 3 ayat (1) & Pasal 618)',
+        uraian: 'Sesuai Pasal 3 ayat (1) dan Ketentuan Peralihan Pasal 618, terhadap perubahan peraturan sesudah perbuatan terjadi diberlakukan peraturan yang baru karena lebih menguntungkan bagi Tersangka/Terdakwa (baik dari segi ancaman pidana, sifat delik aduan, maupun alternatif pidana pengawasan/kerja sosial).',
+        pasal: [3, 618],
+      }
+    }
+    return {
+      judul: 'Tetap Diterapkan Ketentuan Lama yang Lebih Menguntungkan (Pasal 3 ayat (1) in fine)',
+      uraian: 'Berdasarkan pengecualian Pasal 3 ayat (1) ("kecuali ketentuan peraturan perundang-undangan yang lama lebih menguntungkan"), apabila rumusan atau ancaman pidana pada aturan lama (WvS) terbukti lebih ringan/menguntungkan bagi pelaku untuk tempus delicti sebelum masa berlaku UU 1/2023, maka digunakan ketentuan yang lama.',
+      pasal: [3, 618],
+    }
+  }
+
+  const hasil = rekomendasi()
+
+  return (
+    <Kartu style={{ marginTop: 20 }}>
+      <div className="row-gap" style={{ marginBottom: 10, flexWrap: 'wrap' }}>
+        <IkonSkala size={15} style={{ color: 'var(--brand-700)' }} />
+        <Label>Panduan Interaktif Tempus Delicti &amp; Asas Lex Mitior (Pasal 3 &amp; Pasal 618)</Label>
+        <Chip nada="brand">Masa Transisi KUHP</Chip>
+      </div>
+
+      <div className="grid-3" style={{ gap: 10, marginBottom: 12 }}>
+        <div>
+          <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 5 }}>1. Waktu Perbuatan (Tempus Delicti)</div>
+          <select className="input" value={tempus} onChange={e => setTempus(e.target.value as 'sebelum' | 'sesudah')} style={{ minHeight: 36, fontSize: 12.5 }}>
+            <option value="sebelum">Sebelum 2 Januari 2026 (Masa WvS)</option>
+            <option value="sesudah">Sejak / Setelah 2 Januari 2026</option>
+          </select>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 5 }}>2. Status Perkara Saat Ini</div>
+          <select className="input" value={statusPerkara} onChange={e => setStatusPerkara(e.target.value as 'proses' | 'inkracht')} disabled={tempus === 'sesudah'} style={{ minHeight: 36, fontSize: 12.5 }}>
+            <option value="proses">Sedang Penyidikan / Penuntutan / Sidang</option>
+            <option value="inkracht">Sudah Putusan Tetap (Inkracht)</option>
+          </select>
+        </div>
+
+        <div>
+          <div style={{ fontSize: 11.5, fontWeight: 650, marginBottom: 5 }}>3. Perbandingan Aturan</div>
+          <select className="input" value={perubahan} onChange={e => setPerubahan(e.target.value as 'untung_baru' | 'untung_lama' | 'hapus')} disabled={tempus === 'sesudah'} style={{ minHeight: 36, fontSize: 12.5 }}>
+            <option value="untung_baru">UU 1/2023 lebih menguntungkan</option>
+            <option value="untung_lama">KUHP Lama (WvS) lebih menguntungkan</option>
+            <option value="hapus">Bukan lagi tindak pidana di UU 1/2023</option>
+          </select>
+        </div>
+      </div>
+
+      <div style={{ padding: 12, borderRadius: 10, background: 'var(--brand-50)', border: '1px solid var(--brand-200)' }}>
+        <div style={{ fontSize: 13, fontWeight: 800, color: 'var(--brand-700)', marginBottom: 4 }}>{hasil.judul}</div>
+        <div style={{ fontSize: 12.5, color: 'var(--text-soft)', lineHeight: 1.6, marginBottom: 8 }}>{hasil.uraian}</div>
+        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+          {hasil.pasal.map(n => (
+            <Tombol key={n} kecil onClick={() => onBukaPasal(n)}>Buka Pasal {n}</Tombol>
+          ))}
+        </div>
+      </div>
+    </Kartu>
   )
 }
