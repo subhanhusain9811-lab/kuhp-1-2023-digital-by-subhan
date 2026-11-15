@@ -4,11 +4,11 @@
 import { useMemo, useState } from 'react'
 import { db, htmlKeTeks } from '@/lib/data'
 import { useStore } from '@/store/useStore'
-import { waktuRelatif, ringkasAncaman, adaAncaman, unduh, escapeHtml, sitasiFormalPasal } from '@/lib/format'
+import { waktuRelatif, ringkasAncaman, adaAncaman } from '@/lib/format'
 import { Kartu, Chip, Tombol, Kosong, Label, Modal, Segmen } from '@/components/ui'
 import {
   IkonCatatan, IkonTambah, IkonSampah, IkonPena, IkonCari,
-  IkonPemetaan, IkonSimpan, IkonTutup, IkonInfo, IkonPerisai, IkonUnduh, IkonCetak,
+  IkonPemetaan, IkonSimpan, IkonTutup, IkonInfo, IkonPerisai,
 } from '@/components/Ikon'
 import { klasifikasi } from '@/features/mapping/relasi'
 
@@ -301,57 +301,6 @@ function AnalisisEditor({
 
   const simpan = () => { onUbah({ judul, fakta, catatan }); toast('Analisis disimpan') }
 
-  const bangunHtmlDokumen = () => {
-    const pasalHtml = a.pasalTerkait.map(n => {
-      const p = db.get(n)
-      if (!p) return ''
-      return `<div style="margin-bottom:12px;padding:10px;border:1px solid #d1d5db;border-radius:6px;">
-        <p style="margin:0 0 4px;font-weight:bold;">${escapeHtml(sitasiFormalPasal(p))}</p>
-        <p style="margin:0;line-height:1.6;">${escapeHtml(htmlKeTeks(p.teks))}</p>
-        ${adaAncaman(p.ancaman) ? `<p style="margin:6px 0 0;font-size:11pt;color:#4b5563;"><i>Ancaman: ${escapeHtml(ringkasAncaman(p))}</i></p>` : ''}
-      </div>`
-    }).join('')
-
-    const unsurHtml = a.unsur.length === 0 ? '' : `
-      <h2>3. Matriks Unsur</h2>
-      <table border="1" cellspacing="0" cellpadding="6" style="width:100%;border-collapse:collapse;margin-bottom:14px;">
-        <thead><tr style="background:#f3f4f6;"><th align="left">Unsur</th><th align="left">Uraian Analisis</th></tr></thead>
-        <tbody>
-          ${a.unsur.map(u => `<tr><td style="width:32%;font-weight:bold;">${escapeHtml(u.label)}</td><td>${escapeHtml(u.uraian || '—')}</td></tr>`).join('')}
-        </tbody>
-      </table>`
-
-    return `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>${escapeHtml(judul || 'Analisis Hukum')}</title>
-      <style>body{font-family:Georgia,serif;max-width:760px;margin:32px auto;color:#111827;line-height:1.6;font-size:12pt;}h1{font-size:18pt;margin-bottom:4px;}h2{font-size:13pt;margin-top:18px;border-bottom:1px solid #e5e7eb;padding-bottom:4px;}.meta{color:#6b7280;font-size:10pt;margin-bottom:18px;}</style>
-      </head><body>
-      <h1>${escapeHtml(judul || 'Analisis Hukum KUHP')}</h1>
-      <div class="meta">Disusun menggunakan KUHP Digital (UU No. 1 Tahun 2023) · ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</div>
-      <h2>1. Fakta</h2>
-      <p style="white-space:pre-wrap;">${escapeHtml(fakta || '—')}</p>
-      <h2>2. Dasar Hukum (Redaksi Resmi UU No. 1 Tahun 2023)</h2>
-      ${pasalHtml || '<p>Belum ada pasal yang ditambahkan.</p>'}
-      ${unsurHtml}
-      <h2>${a.unsur.length > 0 ? '4' : '3'}. Analisis &amp; Kesimpulan</h2>
-      <p style="white-space:pre-wrap;">${escapeHtml(catatan || '—')}</p>
-      </body></html>`
-  }
-
-  const eksporDoc = () => {
-    const slug = (judul || 'analisis-kuhp').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'analisis-kuhp'
-    unduh(`${slug}.doc`, bangunHtmlDokumen(), 'application/msword;charset=utf-8')
-    toast('Dokumen analisis (.doc) diunduh')
-  }
-
-  const cetakAnalisis = () => {
-    const w = window.open('', '_blank', 'width=860,height=720')
-    if (!w) { toast('Izinkan pop-up untuk mencetak analisis', 'galat'); return }
-    w.document.open()
-    w.document.write(bangunHtmlDokumen())
-    w.document.close()
-    w.focus()
-    setTimeout(() => w.print(), 200)
-  }
-
   const tambahPasal = () => {
     const n = parseInt(nomorTambah, 10)
     if (!n || !db.get(n)) { toast('Nomor pasal tidak valid', 'galat'); return }
@@ -508,8 +457,6 @@ function AnalisisEditor({
           display: 'flex', gap: 7, paddingTop: 4, borderTop: '1px solid var(--border)', flexWrap: 'wrap',
         }}>
           <Tombol nada="primary" ikon={<IkonSimpan size={13} />} onClick={simpan}>Simpan analisis</Tombol>
-          <Tombol ikon={<IkonUnduh size={13} />} onClick={eksporDoc}>Ekspor Word (.doc)</Tombol>
-          <Tombol ikon={<IkonCetak size={13} />} onClick={cetakAnalisis}>Cetak / PDF</Tombol>
           <Tombol nada="danger" ikon={<IkonSampah size={13} />} onClick={onHapus}>Hapus berkas</Tombol>
           <span className="spacer" />
           <span style={{ fontSize: 10.5, color: 'var(--muted)', alignSelf: 'center', display: 'flex', alignItems: 'center', gap: 4 }}>

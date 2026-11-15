@@ -8,7 +8,6 @@ import { hashKeRute, ruteKeHash } from '@/lib/router'
 import { Sidebar } from '@/components/Sidebar'
 import { CommandPalette } from '@/components/CommandPalette'
 import { ToastHost } from '@/components/ui'
-import { ErrorBoundary } from '@/components/ErrorBoundary'
 import { Dashboard } from '@/features/dashboard/Dashboard'
 import { Reader } from '@/features/reader/Reader'
 import { SearchPage } from '@/features/search/SearchPage'
@@ -17,7 +16,6 @@ import { LibraryPage } from '@/features/library/LibraryPage'
 import { MappingPage } from '@/features/mapping/MappingPage'
 import { NotesPage, AnalysisPage } from '@/features/notes/NotesPage'
 import { AssistantPage } from '@/features/ai/AssistantPage'
-import { CalculatorPage } from '@/features/calculator/CalculatorPage'
 import { ExportPage } from '@/features/export/ExportPage'
 import { SettingsPage } from '@/features/settings/SettingsPage'
 import { AboutPage } from '@/features/about/AboutPage'
@@ -33,7 +31,6 @@ const LABEL_RUTE: Record<string, string> = {
   catatan: 'Catatan Pribadi',
   analisis: 'Ruang Analisis',
   asisten: 'Asisten Hukum',
-  kalkulator: 'Kalkulator Pidana',
   ekspor: 'Ekspor & Cetak',
   pengaturan: 'Pengaturan',
   tentang: 'Sumber & Integritas',
@@ -179,7 +176,6 @@ export default function App() {
         </header>
 
         <main className="konten" id="konten-utama">
-          <ErrorBoundary key={rute.nama} onBeranda={() => navigasi({ nama: 'dashboard' })}>
           {rute.nama === 'dashboard' && <Dashboard />}
           {rute.nama === 'baca' && <Reader nomor={rute.pasal} />}
           {rute.nama === 'cari' && <SearchPage qAwal={rute.q} />}
@@ -189,11 +185,9 @@ export default function App() {
           {rute.nama === 'catatan' && <NotesPage />}
           {rute.nama === 'analisis' && <AnalysisPage idAwal={rute.id} />}
           {rute.nama === 'asisten' && <AssistantPage />}
-          {rute.nama === 'kalkulator' && <CalculatorPage />}
           {rute.nama === 'ekspor' && <ExportPage />}
           {rute.nama === 'pengaturan' && <SettingsPage />}
           {rute.nama === 'tentang' && <AboutPage />}
-          </ErrorBoundary>
         </main>
       </div>
 

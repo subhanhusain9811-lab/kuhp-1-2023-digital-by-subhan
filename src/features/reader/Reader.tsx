@@ -164,12 +164,6 @@ export function Reader({ nomor }: { nomor: number }) {
         <Tombol kecil ikon={<IkonCatatan size={14} />} onClick={() => setCatatanBuka(true)}>
           Catatan
         </Tombol>
-        <Tombol kecil ikon={<IkonSalin size={14} />} onClick={async () => {
-          const ok = await salin(sitasiFormalPasal(pasal))
-          tampilkanToast(ok ? 'Sitasi formal disalin' : 'Gagal menyalin sitasi', ok ? 'ok' : 'galat')
-        }}>
-          Salin Sitasi
-        </Tombol>
         <Tombol kecil ikon={<IkonCetak size={14} />} onClick={() => window.print()}>
           Cetak
         </Tombol>
