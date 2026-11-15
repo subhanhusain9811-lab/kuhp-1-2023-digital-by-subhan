@@ -81,6 +81,15 @@ interface State {
 
   toast: { id: number; pesan: string; jenis: 'ok' | 'info' | 'galat' } | null
   tampilkanToast: (pesan: string, jenis?: 'ok' | 'info' | 'galat') => void
+  pulihkanCadangan: (data: {
+    bookmark?: Bookmark[]
+    catatan?: CatatanPribadi[]
+    analisis?: AnalisisHukum[]
+    riwayat?: RiwayatBaca[]
+    riwayatCari?: string[]
+    preferensi?: Partial<Preferensi>
+    tema?: Tema
+  }, mode: 'gabung' | 'timpa') => void
 }
 
 export const useStore = create<State>()(
@@ -197,6 +206,47 @@ export const useStore = create<State>()(
         setTimeout(() => {
           if (get().toast?.id === id) set({ toast: null })
         }, 2600)
+      },
+      pulihkanCadangan: (data, mode) => {
+        const cur = get()
+        const arr = <T,>(v: unknown): T[] => (Array.isArray(v) ? (v as T[]) : [])
+        const bmBaru = arr<Bookmark>(data.bookmark)
+        const catBaru = arr<CatatanPribadi>(data.catatan)
+        const anaBaru = arr<AnalisisHukum>(data.analisis)
+        const riwBaru = arr<RiwayatBaca>(data.riwayat)
+        const cariBaru = arr<string>(data.riwayatCari)
+
+        if (mode === 'timpa') {
+          set({
+            bookmark: bmBaru,
+            catatan: catBaru,
+            analisis: anaBaru,
+            riwayat: riwBaru.slice(0, 60),
+            riwayatCari: cariBaru.slice(0, 25),
+            preferensi: data.preferensi ? { ...PREFERENSI_AWAL, ...data.preferensi } : cur.preferensi,
+            tema: data.tema ?? cur.tema,
+          })
+          return
+        }
+
+        const gabungId = <T extends { id: string }>(lama: T[], baru: T[]) => {
+          const ada = new Set(lama.map(x => x.id))
+          return [...lama, ...baru.filter(x => x && typeof x.id === 'string' && !ada.has(x.id))]
+        }
+        const bmPasal = new Set(cur.bookmark.map(b => b.pasal))
+        const bookmark = [...cur.bookmark, ...bmBaru.filter(b => b && typeof b.pasal === 'number' && !bmPasal.has(b.pasal))]
+        const riwPasal = new Set(cur.riwayat.map(r => r.pasal))
+        const riwayat = [...cur.riwayat, ...riwBaru.filter(r => r && typeof r.pasal === 'number' && !riwPasal.has(r.pasal))].slice(0, 60)
+        const cariSet = new Set(cur.riwayatCari.map(x => x.toLowerCase()))
+        const riwayatCari = [...cur.riwayatCari, ...cariBaru.filter(x => typeof x === 'string' && !cariSet.has(x.toLowerCase()))].slice(0, 25)
+
+        set({
+          bookmark,
+          catatan: gabungId(cur.catatan, catBaru),
+          analisis: gabungId(cur.analisis, anaBaru),
+          riwayat,
+          riwayatCari,
+        })
       },
     }),
     {

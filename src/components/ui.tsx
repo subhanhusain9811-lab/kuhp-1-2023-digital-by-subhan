@@ -90,9 +90,10 @@ export function Segmen<T extends string | number>({
           aria-pressed={nilai === o.nilai}
           style={{
             minHeight: 30, padding: '0 11px', borderRadius: 7, fontSize: 'var(--fs-xs)',
-            fontWeight: 650,
+            fontWeight: nilai === o.nilai ? 750 : 600,
             background: nilai === o.nilai ? 'var(--surface)' : 'transparent',
             color: nilai === o.nilai ? 'var(--brand-700)' : 'var(--muted)',
+            border: nilai === o.nilai ? '1px solid var(--border-strong)' : '1px solid transparent',
             boxShadow: nilai === o.nilai ? 'var(--shadow-xs)' : 'none',
             transition: 'all 140ms var(--ease)',
           }}
@@ -177,7 +178,7 @@ export function Modal({
           display: 'flex', flexDirection: 'column',
           background: 'var(--surface)', border: '1px solid var(--border)',
           borderRadius: 16, boxShadow: 'var(--shadow-lg)',
-          animation: 'popIn 170ms var(--ease) both', outline: 'none',
+          animation: 'modalScaleIn 160ms var(--ease) both', outline: 'none',
         }}
       >
         <div style={{
@@ -212,6 +213,7 @@ export function ToastHost() {
 export function Label({ children }: { children: ReactNode }) {
   return (
     <span style={{
+      display: 'inline-block', lineHeight: 1.4, paddingInline: 1,
       fontSize: 'var(--fs-2xs)', fontWeight: 700, letterSpacing: '.06em',
       textTransform: 'uppercase', color: 'var(--muted)',
     }}>{children}</span>

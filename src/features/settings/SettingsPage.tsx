@@ -1,7 +1,7 @@
 /* ============================================================
    Pengaturan — tema, tipografi baca, tampilan, data lokal
    ============================================================ */
-import { useState } from 'react'
+import { useRef, useState, type ChangeEvent } from 'react'
 import { useStore } from '@/store/useStore'
 import { db } from '@/lib/data'
 import { Kartu, Chip, Tombol, Label, Segmen, Modal } from '@/components/ui'
@@ -25,7 +25,21 @@ export function SettingsPage() {
   const kosongkanRiwayat = useStore(s => s.kosongkanRiwayat)
   const kosongkanCari = useStore(s => s.kosongkanCari)
   const tampilkanToast = useStore(s => s.tampilkanToast)
+  const pulihkanCadangan = useStore(s => s.pulihkanCadangan)
   const [konfirmasi, setKonfirmasi] = useState<null | 'riwayat' | 'cari' | 'semua'>(null)
+  const [berkasImpor, setBerkasImpor] = useState<null | {
+    nama: string
+    data: {
+      bookmark?: unknown[]
+      catatan?: unknown[]
+      analisis?: unknown[]
+      riwayat?: unknown[]
+      riwayatCari?: string[]
+      preferensi?: Record<string, unknown>
+      tema?: 'terang' | 'gelap' | 'sistem'
+    }
+  }>(null)
+  const refImpor = useRef<HTMLInputElement>(null)
 
   const cadangkan = () => {
     const data = {
@@ -37,6 +51,28 @@ export function SettingsPage() {
     unduh(`kuhp-cadangan-${new Date().toISOString().slice(0, 10)}.json`,
       JSON.stringify(data, null, 2), 'application/json')
     tampilkanToast('Cadangan data diunduh')
+  }
+
+  const pilihBerkas = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    e.target.value = ''
+    if (!file) return
+    const reader = new FileReader()
+    reader.onload = () => {
+      try {
+        const parsed = JSON.parse(String(reader.result ?? ''))
+        if (!parsed || typeof parsed !== 'object' || (
+          !Array.isArray(parsed.bookmark) && !Array.isArray(parsed.catatan) && !Array.isArray(parsed.analisis)
+        )) {
+          tampilkanToast('Format berkas cadangan tidak valid', 'galat')
+          return
+        }
+        setBerkasImpor({ nama: file.name, data: parsed })
+      } catch {
+        tampilkanToast('Gagal membaca berkas JSON', 'galat')
+      }
+    }
+    reader.readAsText(file)
   }
 
   const hapusSemua = () => {
@@ -209,6 +245,17 @@ export function SettingsPage() {
 
         <div style={{ display: 'flex', gap: 7, flexWrap: 'wrap' }}>
           <Tombol kecil ikon={<IkonUnduh size={13} />} onClick={cadangkan}>Unduh cadangan</Tombol>
+          <input
+            ref={refImpor}
+            type="file"
+            accept=".json,application/json"
+            onChange={pilihBerkas}
+            style={{ display: 'none' }}
+            aria-label="Pilih berkas cadangan JSON"
+          />
+          <Tombol kecil ikon={<IkonBuku size={13} />} onClick={() => refImpor.current?.click()}>
+            Pulihkan cadangan
+          </Tombol>
           <Tombol kecil nada="danger" ikon={<IkonSampah size={13} />}
             onClick={() => setKonfirmasi('riwayat')} disabled={riwayat.length === 0}>
             Hapus riwayat baca
@@ -279,6 +326,45 @@ export function SettingsPage() {
             Ya, hapus
           </Tombol>
         </div>
+      </Modal>
+
+      <Modal buka={berkasImpor !== null} onTutup={() => setBerkasImpor(null)} judul="Pulihkan Cadangan Data">
+        {berkasImpor && (
+          <>
+            <p style={{ fontSize: 13, color: 'var(--text-soft)', lineHeight: 1.6, marginBottom: 10 }}>
+              Berkas <b>{berkasImpor.nama}</b> memuat:
+            </p>
+            <div style={{
+              display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 8, marginBottom: 14,
+              padding: 10, borderRadius: 9, background: 'var(--surface-2)', border: '1px solid var(--border)',
+              fontSize: 12,
+            }}>
+              <div><b>{Array.isArray(berkasImpor.data.bookmark) ? berkasImpor.data.bookmark.length : 0}</b> bookmark</div>
+              <div><b>{Array.isArray(berkasImpor.data.catatan) ? berkasImpor.data.catatan.length : 0}</b> catatan</div>
+              <div><b>{Array.isArray(berkasImpor.data.analisis) ? berkasImpor.data.analisis.length : 0}</b> analisis</div>
+            </div>
+            <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.55, marginBottom: 14 }}>
+              Pilih <b>Gabung</b> untuk menambahkan item baru tanpa menghapus data Anda saat ini, atau <b>Timpa</b> untuk mengganti seluruh data lokal.
+            </p>
+            <div style={{ display: 'flex', gap: 8, justifyContent: 'flex-end', flexWrap: 'wrap' }}>
+              <Tombol onClick={() => setBerkasImpor(null)}>Batal</Tombol>
+              <Tombol nada="primary" onClick={() => {
+                pulihkanCadangan(berkasImpor.data as Parameters<typeof pulihkanCadangan>[0], 'gabung')
+                setBerkasImpor(null)
+                tampilkanToast('Cadangan digabung ke data saat ini')
+              }}>
+                Gabung data
+              </Tombol>
+              <Tombol nada="danger" onClick={() => {
+                pulihkanCadangan(berkasImpor.data as Parameters<typeof pulihkanCadangan>[0], 'timpa')
+                setBerkasImpor(null)
+                tampilkanToast('Data lokal dipulihkan dari cadangan')
+              }}>
+                Timpa semua
+              </Tombol>
+            </div>
+          </>
+        )}
       </Modal>
     </div>
   )

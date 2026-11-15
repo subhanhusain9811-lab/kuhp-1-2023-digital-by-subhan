@@ -234,6 +234,7 @@ export type Rute =
   | { nama: 'catatan' }
   | { nama: 'analisis'; id?: string }
   | { nama: 'asisten' }
+  | { nama: 'kalkulator' }
   | { nama: 'ekspor' }
   | { nama: 'pengaturan' }
   | { nama: 'tentang'; sub?: 'koreksi' | 'sumber' }

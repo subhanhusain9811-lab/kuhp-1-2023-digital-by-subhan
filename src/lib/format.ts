@@ -176,37 +176,16 @@ export function sorotKata(teks: string, kata: string[]): string {
   return escapeHtml(teks).replace(re, '<mark>$1</mark>')
 }
 
-export function escapeHtml(s: string): string {
-  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+export function escapeHtml(teks: string): string {
+  return teks
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 }
 
-/* ---------- Unduh berkas ---------- */
-export function unduh(nama: string, isi: string, mime = 'text/plain;charset=utf-8') {
-  const blob = new Blob([isi], { type: mime })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = nama
-  document.body.appendChild(a)
-  a.click()
-  document.body.removeChild(a)
-  setTimeout(() => URL.revokeObjectURL(url), 2000)
-}
-
-/* ---------- Ukuran baca ---------- */
-export const LEVEL_FONT = [
-  { id: 0, label: 'Kecil', px: 15, lh: 1.65 },
-  { id: 1, label: 'Normal', px: 17, lh: 1.7 },
-  { id: 2, label: 'Besar', px: 19, lh: 1.75 },
-  { id: 3, label: 'Sangat Besar', px: 22, lh: 1.8 },
-] as const
-
-export function estimasiBaca(kata: number): string {
-  const menit = Math.max(1, Math.round(kata / 200))
-  return `± ${menit} menit baca`
-}
-
-export function hitungKata(s: string): number {
-  return (s.match(/[A-Za-zÀ-ÿ0-9]+/g) ?? []).length
+export function sitasiFormalPasal(p: Pasal, ayat?: number | null): string {
+  const bagAyat = ayat != null ? ` ayat (${ayat})` : ''
+  return `Pasal ${p.nomor}${bagAyat} Undang-Undang Nomor 1 Tahun 2023 tentang Kitab Undang-Undang Hukum Pidana (Lembaran Negara Republik Indonesia Tahun 2023 Nomor 1, Tambahan Lembaran Negara Republik Indonesia Nomor 6842)`
 }

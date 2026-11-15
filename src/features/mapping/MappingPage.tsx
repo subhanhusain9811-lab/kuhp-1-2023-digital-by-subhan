@@ -180,7 +180,7 @@ export function MappingPage() {
 
       {modus === 'unsur' && (
         <Kartu style={{ marginBottom: 18 }}>
-          <div className="row-gap" style={{ marginBottom: 9 }}>
+          <div className="row-gap" style={{ marginBottom: 9, paddingTop: 2 }}>
             <Label>Unsur Subjektif</Label>
             <span style={{ fontSize: 11, color: 'var(--muted)' }}>— sikap batin pelaku</span>
           </div>

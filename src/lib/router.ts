@@ -16,6 +16,7 @@ export function ruteKeHash(r: Rute): string {
     case 'catatan': return '#/catatan'
     case 'analisis': return r.id ? `#/analisis/${r.id}` : '#/analisis'
     case 'asisten': return '#/asisten'
+    case 'kalkulator': return '#/kalkulator'
     case 'ekspor': return '#/ekspor'
     case 'pengaturan': return '#/pengaturan'
     case 'tentang': return r.sub ? `#/tentang/${r.sub}` : '#/tentang'
@@ -47,6 +48,7 @@ export function hashKeRute(hash: string): Rute {
     case 'catatan': return { nama: 'catatan' }
     case 'analisis': return { nama: 'analisis', id: seg[1] }
     case 'asisten': return { nama: 'asisten' }
+    case 'kalkulator': return { nama: 'kalkulator' }
     case 'ekspor': return { nama: 'ekspor' }
     case 'pengaturan': return { nama: 'pengaturan' }
     case 'tentang':

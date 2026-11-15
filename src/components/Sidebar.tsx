@@ -73,6 +73,7 @@ export function Sidebar() {
 
         <div className="nav-group-label">Alat</div>
         {item('asisten', 'Asisten Hukum', <IkonAsisten size={19} />)}
+        {item('kalkulator', 'Kalkulator Pidana', <IkonSkala size={19} />)}
         {item('ekspor', 'Ekspor & Cetak', <IkonEkspor size={19} />)}
         {item('pengaturan', 'Pengaturan', <IkonPengaturan size={19} />)}
         {item('tentang', 'Sumber & Integritas', <IkonPerisai size={19} />)}

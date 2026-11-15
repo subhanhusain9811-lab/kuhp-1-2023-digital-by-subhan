@@ -174,7 +174,7 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
         <>
           {/* Ringkasan pemahaman kueri */}
           {urai && (
-            <Kartu pad={12} style={{ marginBottom: 12, background: 'var(--surface-2)' }}>
+            <Kartu pad={14} style={{ marginBottom: 12, background: 'var(--surface-2)' }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
                 <Label>Kueri dipahami sebagai</Label>
                 {urai.nomorPasal != null && (
