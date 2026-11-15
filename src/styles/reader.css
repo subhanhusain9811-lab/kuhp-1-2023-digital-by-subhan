@@ -1,0 +1,64 @@
+/* ============================================================
+   Tipografi dokumen hukum untuk pembaca pasal
+   ============================================================ */
+
+.teks-pasal {
+  color: var(--text);
+  text-align: justify;
+  text-justify: inter-word;
+  hyphens: auto;
+  -webkit-hyphens: auto;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+}
+
+.teks-pasal p { margin: 0 0 .7em; }
+.teks-pasal p:last-child { margin-bottom: 0; }
+.teks-pasal strong { font-weight: 700; color: var(--text); }
+.teks-pasal em { font-style: italic; }
+
+/* Daftar butir.
+   Label butir sudah tersimpan DI DALAM data (span.huruf: "a.", "1.", ...) dan
+   sudah diverifikasi terhadap naskah resmi. Marker bawaan peramban karena itu
+   disembunyikan — kalau tidak, label tercetak dua kali ("a. a. pidana ..."). */
+.teks-pasal ol { list-style: none; margin: 0; padding-left: 0; }
+.teks-pasal ol ol { margin-left: 1.6em; }
+.teks-pasal li { margin: 0 0 .35em; }
+.teks-pasal ol > li > span.huruf {
+  display: inline-block;
+  min-width: 1.8em;
+  font-weight: 700;
+  color: var(--text-soft);
+}
+
+.teks-penjelasan {
+  text-align: justify;
+  text-justify: inter-word;
+  font-family: var(--font-doc);
+}
+.teks-penjelasan p { margin: 0 0 .75em; }
+.teks-penjelasan p:last-child { margin-bottom: 0; }
+.teks-penjelasan br { line-height: 1.75; }
+
+/* Sorotan hasil pencarian */
+mark {
+  background: var(--brand-100);
+  color: var(--text);
+  padding: 0 2px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+html[data-tema="gelap"] mark {
+  background: rgba(42, 171, 238, .28);
+  color: #fff;
+}
+
+/* Tampilkan tombol menu hanya pada layar kecil */
+.tampil-mobile { display: none; }
+@media (max-width: 1024px) {
+  .tampil-mobile { display: inline-flex; }
+  .topbar-title { max-width: 34vw; }
+}
+@media (max-width: 560px) {
+  .topbar-title { display: none; }
+}

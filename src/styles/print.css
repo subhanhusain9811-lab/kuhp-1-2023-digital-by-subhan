@@ -1,0 +1,76 @@
+/* ============================================================
+   Gaya cetak — dokumen hukum bersih tanpa elemen antarmuka
+   ============================================================ */
+
+@media print {
+  @page {
+    size: A4;
+    margin: 20mm 18mm 22mm;
+  }
+
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+
+  .app { display: block !important; height: auto !important; overflow: visible !important; }
+
+  .sidebar,
+  .topbar,
+  .backdrop,
+  .toast-wrap,
+  .palet-backdrop,
+  .tampil-mobile { display: none !important; }
+
+  .main { display: block !important; overflow: visible !important; }
+  .konten { overflow: visible !important; height: auto !important; }
+  .konten-dalam { max-width: none !important; padding: 0 !important; }
+
+  /* Sembunyikan hanya kontrol, bukan isi */
+  .btn, .chip, .kbd, [role="dialog"] { display: none !important; }
+
+  .card {
+    border: 0 !important;
+    box-shadow: none !important;
+    background: #fff !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .teks-pasal,
+  .teks-penjelasan {
+    color: #000 !important;
+    font-size: 11.5pt !important;
+    line-height: 1.55 !important;
+    text-align: justify;
+  }
+
+  h1 { font-size: 15pt !important; margin-bottom: 4pt !important; }
+
+  /* Judul kecil di atas cetakan */
+  body::before {
+    content: "KUHP DIGITAL — Undang-Undang Nomor 1 Tahun 2023 tentang Kitab Undang-Undang Hukum Pidana";
+    display: block;
+    font-size: 8.5pt;
+    color: #555;
+    border-bottom: 1.2pt solid #1B84B8;
+    padding-bottom: 5pt;
+    margin-bottom: 10pt;
+    font-family: Georgia, serif;
+  }
+
+  body::after {
+    content: "Dicetak dari KUHP DIGITAL. Redaksi pasal disalin apa adanya. Dokumen ini bukan nasihat hukum.";
+    display: block;
+    font-size: 8pt;
+    color: #666;
+    border-top: 0.5pt solid #ccc;
+    padding-top: 5pt;
+    margin-top: 14pt;
+  }
+
+  a { color: #000 !important; text-decoration: none !important; }
+  mark { background: transparent !important; font-weight: inherit !important; }
+}

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="KUHP Digital">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#42B4EE"/>
+      <stop offset="0.55" stop-color="#2AABEE"/>
+      <stop offset="1" stop-color="#166991"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#g)"/>
+  <!-- timbangan keadilan -->
+  <g stroke="#FFFFFF" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path d="M256 118v268"/>
+    <path d="M206 386h100"/>
+    <path d="M150 168h212"/>
+    <!-- palang kiri -->
+    <path d="M150 168l-42 84h84z" fill="#FFFFFF" fill-opacity="0.16"/>
+    <!-- palang kanan -->
+    <path d="M362 168l-42 84h84z" fill="#FFFFFF" fill-opacity="0.16"/>
+    <circle cx="256" cy="126" r="12" fill="#FFFFFF" stroke="none"/>
+  </g>
+</svg>

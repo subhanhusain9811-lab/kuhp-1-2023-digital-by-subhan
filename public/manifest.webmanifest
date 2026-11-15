@@ -1,0 +1,50 @@
+{
+  "name": "KUHP DIGITAL — UU No. 1 Tahun 2023",
+  "short_name": "KUHP Digital",
+  "description": "Pusat Referensi Hukum Pidana dalam Satu Genggaman. Teks lengkap UU No. 1 Tahun 2023 tentang KUHP dengan pencarian hibrida, pemetaan hukum, dan catatan pribadi.",
+  "lang": "id",
+  "dir": "ltr",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#F7F9FB",
+  "theme_color": "#2AABEE",
+  "categories": [
+    "books",
+    "education",
+    "productivity",
+    "reference"
+  ],
+  "icons": [
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Pencarian",
+      "url": "./#/cari",
+      "description": "Cari pasal atau kata kunci"
+    },
+    {
+      "name": "Daftar Isi",
+      "url": "./#/daftar-isi",
+      "description": "Struktur lengkap KUHP"
+    },
+    {
+      "name": "Pasal 1",
+      "url": "./#/pasal/1",
+      "description": "Mulai membaca dari Pasal 1"
+    }
+  ]
+}
