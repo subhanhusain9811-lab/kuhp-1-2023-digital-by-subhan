@@ -87,11 +87,15 @@ html[data-tema="gelap"] ::selection { background: var(--brand-300); color: #fff;
 .btn[disabled] { opacity: .5; pointer-events: none; }
 
 .btn-primary {
-  /* latar cukup gelap agar teks putih memenuhi 4.5:1 */
-  background: var(--aksen-1); border-color: var(--aksen-1); color: #fff;
-  box-shadow: 0 1px 2px rgba(21, 115, 163, .35);
+  background: linear-gradient(135deg, #E11D48 0%, #BE123C 55%, #9F1239 100%);
+  border-color: #BE123C; color: #fff;
+  box-shadow: 0 4px 14px rgba(190, 18, 60, .35);
 }
-.btn-primary:hover { background: var(--aksen-2); border-color: var(--aksen-2); }
+.btn-primary:hover {
+  background: linear-gradient(135deg, #F43F5E 0%, #E11D48 55%, #BE123C 100%);
+  border-color: #E11D48;
+  box-shadow: 0 6px 18px rgba(225, 29, 72, .45);
+}
 
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover { background: var(--surface-2); border-color: transparent; }
@@ -166,3 +170,5 @@ select.input { appearance: none; background-image: none; padding-right: 30px; cu
   animation: shimmer 1.4s infinite linear;
   border-radius: var(--radius-sm);
 }
+
+@keyframes heroPulse { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }

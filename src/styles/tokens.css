@@ -5,16 +5,16 @@
    ============================================================ */
 
 :root {
-  /* Brand — Royal Justice Indigo & Warm Amber */
-  --brand-50:  #EEF2FF;
-  --brand-100: #E0E7FF;
-  --brand-200: #C7D2FE;
-  --brand-300: #93C5FD;
-  --brand-400: #60A5FA;
-  --brand-500: #2563EB;
-  --brand-600: #1D4ED8;
-  --brand-700: #1E40AF;   /* teks di atas brand-50 / putih: >7:1 */
-  --brand-800: #1E3A8A;
+  /* Brand — Sovereign Crimson, Royal Indigo & Gold Blaze */
+  --brand-50:  #FFF1F2;
+  --brand-100: #FFE4E6;
+  --brand-200: #FECDD3;
+  --brand-300: #FDA4AF;
+  --brand-400: #FB7185;
+  --brand-500: #E11D48;
+  --brand-600: #BE123C;
+  --brand-700: #9F1239;   /* teks di atas brand-50 / putih: >7:1 */
+  --brand-800: #881337;
 
   /* Netral */
   --bg:        #F7F9FB;
@@ -71,9 +71,9 @@
   --dur-fast: 140ms;
 
   /* Permukaan aksen pekat — dipakai agar teks putih tetap terbaca */
-  --aksen-1: #1D4ED8;
-  --aksen-2: #1E3A8A;
-  --aksen-3: #0F172A;
+  --aksen-1: #BE123C;
+  --aksen-2: #881337;
+  --aksen-3: #4C0519;
 
   /* Ukuran baca (dapat diubah pengguna) */
   --reader-fs: 17px;
@@ -82,15 +82,15 @@
 }
 
 html[data-tema="gelap"] {
-  --brand-50:  #172554;
-  --brand-100: #1E3A8A;
-  --brand-200: #1D4ED8;
-  --brand-300: #2563EB;
-  --brand-400: #3B82F6;
-  --brand-500: #60A5FA;
-  --brand-600: #93C5FD;
-  --brand-700: #BFDBFE;   /* teks aksen di atas --brand-50 gelap: ≥7:1 */
-  --brand-800: #DBEAFE;
+  --brand-50:  #3B0A1E;
+  --brand-100: #500724;
+  --brand-200: #881337;
+  --brand-300: #BE123C;
+  --brand-400: #E11D48;
+  --brand-500: #F43F5E;
+  --brand-600: #FB7185;
+  --brand-700: #FDA4AF;   /* teks aksen di atas --brand-50 gelap: ≥7:1 */
+  --brand-800: #FFE4E6;
 
   --bg:        #0E1621;
   --surface:   #17212B;

@@ -50,13 +50,15 @@ export function Dashboard() {
           // Lapisan: (1) lapisan gelap di sisi teks agar teks putih ≥4.5:1,
           // (2) cincin cahaya Telegram-blue di kanan, (3) alas gradien pekat.
           background:
-            'linear-gradient(105deg, rgba(15,23,42,.86) 0%, rgba(30,58,138,.62) 42%, rgba(30,58,138,.15) 75%, rgba(15,23,42,0) 100%),'
-            + 'radial-gradient(115% 125% at 90% 8%, rgba(245,158,11,.42) 0%, rgba(245,158,11,.14) 45%, rgba(245,158,11,0) 68%),'
-            + 'radial-gradient(95% 95% at 98% 100%, rgba(59,130,246,.32) 0%, rgba(59,130,246,0) 62%),'
-            + 'linear-gradient(120deg, #0F172A 0%, #1E3A8A 52%, #1D4ED8 100%)',
+            'radial-gradient(110% 130% at 92% 10%, rgba(245,158,11,.52) 0%, rgba(245,158,11,.18) 42%, rgba(245,158,11,0) 68%),'
+            + 'radial-gradient(95% 100% at 85% 95%, rgba(225,29,72,.45) 0%, rgba(225,29,72,0) 62%),'
+            + 'linear-gradient(125deg, #1E1B4B 0%, #7F1D1D 38%, #BE123C 72%, #D97706 100%)',
+          backgroundSize: '160% 160%',
+          animation: 'heroPulse 12s ease infinite',
           color: '#fff',
           overflow: 'hidden',
-          boxShadow: '0 12px 32px rgba(15, 23, 42, .28)',
+          boxShadow: '0 14px 36px rgba(136, 19, 55, .34)',
+          border: '1px solid rgba(251, 191, 36, .28)',
         }}
       >
         <div aria-hidden="true" style={{

@@ -339,6 +339,59 @@ function AnalisisEditor({
       </body></html>`
   }
 
+  const eksporTemplateAdvokat = (jenis: 'lo' | 'eksepsi') => {
+    const labelDok = jenis === 'lo' ? 'PENDAPAT HUKUM (LEGAL OPINION)' : 'NOTA KEBERATAN (EKSEPSI) / PEMBELAAN (PLEIDOI)'
+    const pasalBlok = a.pasalTerkait.map(n => {
+      const p = db.get(n)
+      if (!p) return ''
+      return `<div style="margin-bottom:12px;padding:10px;border-left:3px solid #9f1239;background:#fff1f2;">
+        <p style="margin:0 0 4px;font-weight:bold;">Pasal ${p.nomor} UU No. 1 Tahun 2023 (${esc(p.babJudul)})</p>
+        <p style="margin:0;line-height:1.6;">"${esc(htmlKeTeks(p.teks))}"</p>
+        ${adaAncaman(p.ancaman) ? `<p style="margin:6px 0 0;font-size:10.5pt;color:#881337;"><b>Ancaman Pidana:</b> ${esc(ringkasAncaman(p))}</p>` : ''}
+      </div>`
+    }).join('')
+
+    const unsurTabel = a.unsur.length === 0 ? '' : `
+      <h3>III. ANALISIS PEMENUHAN UNSUR DELIK</h3>
+      <table border="1" cellspacing="0" cellpadding="7" style="width:100%;border-collapse:collapse;margin-bottom:14px;">
+        <thead><tr style="background:#ffe4e6;"><th align="left">Unsur Pasal</th><th align="left">Uraian Fakta &amp; Pembuktian Hukum</th></tr></thead>
+        <tbody>
+          ${a.unsur.map(u => `<tr><td style="width:32%;font-weight:bold;">${esc(u.label)}</td><td>${esc(u.uraian || 'Belum diuraikan')}</td></tr>`).join('')}
+        </tbody>
+      </table>`
+
+    const html = `<!DOCTYPE html><html lang="id"><head><meta charset="utf-8"><title>${esc(labelDok)} - ${esc(judul)}</title>
+      <style>body{font-family:'Times New Roman',Georgia,serif;max-width:760px;margin:32px auto;color:#111827;line-height:1.65;font-size:12pt;}
+      .kop{text-align:center;border-bottom:3px double #881337;padding-bottom:10px;margin-bottom:20px;}
+      .kop h1{font-size:16pt;margin:0;color:#881337;letter-spacing:0.5px;}
+      .kop p{margin:2px 0;font-size:10pt;color:#374151;}
+      h2{font-size:14pt;text-align:center;text-decoration:underline;margin:14px 0 18px;}
+      h3{font-size:12pt;margin-top:16px;color:#881337;}</style></head><body>
+      <div class="kop">
+        <h1>MINZATHU &amp; MIZATHU LAW OFFICES</h1>
+        <p>Advocates &amp; Legal Consultants · Sombaopu, Kabupaten Gowa, Sulawesi Selatan</p>
+        <p>Disusun oleh: <b>Ahmad Subhan Suaib, S.H.</b> · Tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+      </div>
+      <h2>${esc(labelDok)}<br><span style="font-size:11.5pt;font-weight:normal;text-decoration:none;">Perihal: ${esc(judul || 'Analisis Perkara Pidana')}</span></h2>
+      <h3>I. DUDUK PERKARA / POSITA FAKTA</h3>
+      <p style="white-space:pre-wrap;text-align:justify;">${esc(fakta || '—')}</p>
+      <h3>II. DASAR HUKUM (UU NO. 1 TAHUN 2023 TENTANG KUHP)</h3>
+      ${pasalBlok || '<p>Belum ada pasal yang ditambahkan.</p>'}
+      ${unsurTabel}
+      <h3>${a.unsur.length > 0 ? 'IV' : 'III'}. ANALISIS YURIDIS, KESIMPULAN &amp; PETITUM/REKOMENDASI</h3>
+      <p style="white-space:pre-wrap;text-align:justify;">${esc(catatan || '—')}</p>
+      <div style="margin-top:36px;text-align:right;">
+        <p>Hormat Kami,<br>Kuasa Hukum / Konsultan Hukum</p>
+        <br><br>
+        <p><b><u>Ahmad Subhan Suaib, S.H.</u></b><br>Advokat pada Minzathu &amp; Mizathu Law Offices</p>
+      </div>
+      </body></html>`
+
+    const slug = (judul || 'dokumen-hukum').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'dokumen-hukum'
+    unduh(`${jenis}-${slug}.doc`, html, 'application/msword;charset=utf-8')
+    toast(`Template ${jenis === 'lo' ? 'Legal Opinion' : 'Eksepsi/Pleidoi'} (.doc) diunduh`)
+  }
+
   const eksporDoc = () => {
     const slug = (judul || 'analisis-kuhp').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'analisis-kuhp'
     unduh(`${slug}.doc`, bangunHtmlDokumen(), 'application/msword;charset=utf-8')
@@ -512,6 +565,8 @@ function AnalisisEditor({
         }}>
           <Tombol nada="primary" ikon={<IkonSimpan size={13} />} onClick={simpan}>Simpan analisis</Tombol>
           <Tombol ikon={<IkonUnduh size={13} />} onClick={eksporDoc}>Ekspor Word (.doc)</Tombol>
+          <Tombol ikon={<IkonUnduh size={13} />} onClick={() => eksporTemplateAdvokat('lo')}>Template LO (.doc)</Tombol>
+          <Tombol ikon={<IkonUnduh size={13} />} onClick={() => eksporTemplateAdvokat('eksepsi')}>Template Eksepsi/Pleidoi (.doc)</Tombol>
           <Tombol ikon={<IkonCetak size={13} />} onClick={cetakAnalisis}>Cetak / PDF</Tombol>
           <Tombol nada="danger" ikon={<IkonSampah size={13} />} onClick={onHapus}>Hapus berkas</Tombol>
           <span className="spacer" />

@@ -38,6 +38,8 @@ export function Reader({ nomor }: { nomor: number }) {
   const [lompat, setLompat] = useState('')
   const [modalSalin, setModalSalin] = useState<{ judul: string; isi: string } | null>(null)
   const [catatanBuka, setCatatanBuka] = useState(false)
+  const [bandingBuka, setBandingBuka] = useState(false)
+  const [nomorBanding, setNomorBanding] = useState<string>(String(pasal.nomor === 476 ? 486 : 476))
   const [isiCatatan, setIsiCatatan] = useState('')
   const [tocBuka, setTocBuka] = useState(false)
   const refAwal = useRef<HTMLDivElement>(null)
@@ -163,6 +165,9 @@ export function Reader({ nomor }: { nomor: number }) {
         </Tombol>
         <Tombol kecil ikon={<IkonCatatan size={14} />} onClick={() => setCatatanBuka(true)}>
           Catatan
+        </Tombol>
+        <Tombol kecil ikon={<IkonTarget size={14} />} onClick={() => setBandingBuka(true)}>
+          Bandingkan
         </Tombol>
         <Tombol kecil ikon={<IkonSalin size={14} />} onClick={async () => {
           const sitasi = `Pasal ${pasal.nomor} Undang-Undang Nomor 1 Tahun 2023 tentang Kitab Undang-Undang Hukum Pidana (Lembaran Negara Republik Indonesia Tahun 2023 Nomor 1, Tambahan Lembaran Negara Republik Indonesia Nomor 6842)`
@@ -327,6 +332,44 @@ export function Reader({ nomor }: { nomor: number }) {
           </p>
         </Kartu>
       )}
+
+      {/* ===== Radar KUHAP & Karakteristik Delik ===== */}
+      {adaAncaman(pasal.ancaman) && (() => {
+        const penjaraMax = (pasal.ancaman.penjara ?? []).reduce((mx, [, v]) => {
+          const angka = parseFloat(String(v).replace(',', '.'))
+          return Number.isFinite(angka) ? Math.max(mx, angka) : mx
+        }, 0)
+        const beratMutlak = Boolean(pasal.ancaman.mati || pasal.ancaman.seumurHidup)
+        const dapatDitahan = beratMutlak || penjaraMax >= 5 || [476, 486, 492, 466, 591].includes(pasal.nomor)
+        const wajibAdvokat = beratMutlak || penjaraMax >= 5
+        const syaratAlternatif = !beratMutlak && penjaraMax > 0 && penjaraMax <= 5
+        const teksGabung = (pasal.teks + ' ' + pasal.penjelasan).toLowerCase()
+        const delikAduan = teksGabung.includes('pengaduan') || teksGabung.includes('diadukan')
+
+        return (
+          <Kartu style={{ marginTop: 14, background: 'var(--surface-2)' }}>
+            <div className="row-gap" style={{ marginBottom: 10, flexWrap: 'wrap' }}>
+              <IkonPerisai size={15} style={{ color: 'var(--brand-700)' }} />
+              <Label>Radar Praktisi &amp; KUHAP</Label>
+              <Chip nada={delikAduan ? 'warn' : 'brand'}>
+                {delikAduan ? 'Delik Aduan (Klachtdelict)' : 'Delik Biasa'}
+              </Chip>
+              <Chip nada={dapatDitahan ? 'danger' : 'ok'}>
+                {dapatDitahan ? 'Dapat Ditahan (Ancaman ≥ 5 thn / Pengecualian KUHAP)' : 'Tidak Memenuhi Syarat Penahanan Umum (< 5 thn)'}
+              </Chip>
+              {wajibAdvokat && (
+                <Chip nada="warn">Wajib Didampingi Advokat (Ps. 56 KUHAP)</Chip>
+              )}
+              {syaratAlternatif && (
+                <Chip nada="ok">Terbuka Pidana Pengawasan / Kerja Sosial (Ps. 75–85 KUHP)</Chip>
+              )}
+            </div>
+            <div style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.6 }}>
+              Analisis cepat berdasarkan parameter ancaman pidana pada Pasal {pasal.nomor} ({beratMutlak ? 'pidana mati/seumur hidup' : penjaraMax > 0 ? `maksimum ${penjaraMax} tahun penjara` : 'denda/pidana lain'}) dan deteksi klausul pengaduan dalam redaksi pasal.
+            </div>
+          </Kartu>
+        )
+      })()}
 
       {/* ===== Penjelasan resmi ===== */}
       {preferensi.tampilkanPenjelasan && (
@@ -549,6 +592,66 @@ export function Reader({ nomor }: { nomor: number }) {
       {/* ===== Modal salin (cadangan bila clipboard diblokir) ===== */}
       <Modal buka={!!modalSalin} onTutup={() => setModalSalin(null)} judul={modalSalin?.judul ?? 'Kutipan'}>
         <textarea className="input" readOnly value={modalSalin?.isi ?? ''} style={{ minHeight: 200, fontFamily: 'var(--font-mono)', fontSize: 12 }} />
+      </Modal>
+      {/* ===== Modal Bandingkan 2 Pasal Berdampingan ===== */}
+      <Modal buka={bandingBuka} onTutup={() => setBandingBuka(false)} judul={`Bandingkan Pasal ${pasal.nomor} dengan Pasal Lain`} lebar={820}>
+        <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 12.5, fontWeight: 650 }}>Pilih pasal pembanding (1–624):</span>
+          <input
+            className="input mono"
+            value={nomorBanding}
+            onChange={e => setNomorBanding(e.target.value.replace(/\D/g, ''))}
+            placeholder="Contoh: 486"
+            style={{ maxWidth: 120, minHeight: 34, fontSize: 13 }}
+          />
+          {[476, 486, 492, 603, 604].filter(n => n !== pasal.nomor).slice(0, 4).map(n => (
+            <button key={n} className="chip" style={{ cursor: 'pointer' }} onClick={() => setNomorBanding(String(n))}>
+              vs Pasal {n}
+            </button>
+          ))}
+        </div>
+        {(() => {
+          const n2 = parseInt(nomorBanding, 10)
+          const p2 = n2 ? db.get(n2) : undefined
+          return (
+            <div className="grid-2" style={{ gap: 12 }}>
+              <div style={{ padding: 12, borderRadius: 10, background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--brand-700)', marginBottom: 2 }}>
+                  Pasal {pasal.nomor} — {pasal.babJudul}
+                </div>
+                <div style={{ fontFamily: 'var(--font-doc)', fontSize: 13, lineHeight: 1.6, color: 'var(--text-soft)', marginTop: 6 }}>
+                  {htmlKeTeks(pasal.teks)}
+                </div>
+                <div style={{ fontSize: 11.5, color: 'var(--brand-700)', fontWeight: 700, marginTop: 8 }}>
+                  Ancaman: {ringkasAncaman(pasal)}
+                </div>
+              </div>
+
+              <div style={{ padding: 12, borderRadius: 10, background: 'var(--surface-2)', border: '1px solid var(--border)' }}>
+                {p2 ? (
+                  <>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 2 }}>
+                      <span style={{ fontSize: 14, fontWeight: 800, color: 'var(--brand-700)' }}>
+                        Pasal {p2.nomor} — {p2.babJudul}
+                      </span>
+                      <Tombol kecil style={{ marginLeft: 'auto' }} onClick={() => { setBandingBuka(false); navigasi({ nama: 'baca', pasal: p2.nomor }) }}>
+                        Buka
+                      </Tombol>
+                    </div>
+                    <div style={{ fontFamily: 'var(--font-doc)', fontSize: 13, lineHeight: 1.6, color: 'var(--text-soft)', marginTop: 6 }}>
+                      {htmlKeTeks(p2.teks)}
+                    </div>
+                    <div style={{ fontSize: 11.5, color: 'var(--brand-700)', fontWeight: 700, marginTop: 8 }}>
+                      Ancaman: {ringkasAncaman(p2)}
+                    </div>
+                  </>
+                ) : (
+                  <div style={{ fontSize: 12.5, color: 'var(--muted)' }}>Masukkan nomor pasal yang valid (1–624).</div>
+                )}
+              </div>
+            </div>
+          )
+        })()}
       </Modal>
     </div>
   )
