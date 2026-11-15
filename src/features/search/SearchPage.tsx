@@ -231,14 +231,14 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
 
           {/* Saringan buku/bab */}
           <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
-            <select className="input" value={filterBuku} style={{ maxWidth: 200, minHeight: 34, fontSize: 12.5 }}
+            <select className="input" value={filterBuku} style={{ flex: '1 1 140px', maxWidth: 200, minHeight: 34, fontSize: 12.5 }}
               onChange={e => { setFilterBuku(e.target.value); setFilterBab('') }}
               aria-label="Saring berdasarkan buku">
               <option value="">Semua buku</option>
               <option value="BUKU KESATU">Buku Kesatu (1–187)</option>
               <option value="BUKU KEDUA">Buku Kedua (188–624)</option>
             </select>
-            <select className="input" value={filterBab} style={{ maxWidth: 300, minHeight: 34, fontSize: 12.5 }}
+            <select className="input" value={filterBab} style={{ flex: '1 1 180px', maxWidth: 300, minHeight: 34, fontSize: 12.5 }}
               onChange={e => setFilterBab(e.target.value)}
               aria-label="Saring berdasarkan bab">
               <option value="">Semua bab</option>
