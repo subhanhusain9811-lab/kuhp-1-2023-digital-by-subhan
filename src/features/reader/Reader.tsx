@@ -9,7 +9,7 @@ import { db } from '@/lib/data'
 import { useStore } from '@/store/useStore'
 import {
   sanitasiHtml, kutipPasal, kutipAyat, ringkasAncaman, adaAncaman,
-  waktuRelatif, hitungKata, estimasiBaca,
+  waktuRelatif, hitungKata, estimasiBaca, htmlKeTeks,
 } from '@/lib/format'
 import { salin } from '@/lib/storage'
 import { Kartu, Chip, Tombol, Modal, Kosong, Label } from '@/components/ui'
@@ -39,7 +39,7 @@ export function Reader({ nomor }: { nomor: number }) {
   const [modalSalin, setModalSalin] = useState<{ judul: string; isi: string } | null>(null)
   const [catatanBuka, setCatatanBuka] = useState(false)
   const [bandingBuka, setBandingBuka] = useState(false)
-  const [nomorBanding, setNomorBanding] = useState<string>(String(pasal.nomor === 476 ? 486 : 476))
+  const [nomorBanding, setNomorBanding] = useState<string>(String(nomor === 476 ? 486 : 476))
   const [isiCatatan, setIsiCatatan] = useState('')
   const [tocBuka, setTocBuka] = useState(false)
   const refAwal = useRef<HTMLDivElement>(null)
