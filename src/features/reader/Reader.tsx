@@ -165,7 +165,7 @@ export function Reader({ nomor }: { nomor: number }) {
           Catatan
         </Tombol>
         <Tombol kecil ikon={<IkonSalin size={14} />} onClick={async () => {
-          const ok = await salin(sitasiFormalPasal(pasal, ayatAktif))
+          const ok = await salin(sitasiFormalPasal(pasal))
           tampilkanToast(ok ? 'Sitasi formal disalin' : 'Gagal menyalin sitasi', ok ? 'ok' : 'galat')
         }}>
           Salin Sitasi

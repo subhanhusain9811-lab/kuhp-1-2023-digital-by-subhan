@@ -179,6 +179,7 @@ export default function App() {
         </header>
 
         <main className="konten" id="konten-utama">
+          <ErrorBoundary key={rute.nama} onBeranda={() => navigasi({ nama: 'dashboard' })}>
           {rute.nama === 'dashboard' && <Dashboard />}
           {rute.nama === 'baca' && <Reader nomor={rute.pasal} />}
           {rute.nama === 'cari' && <SearchPage qAwal={rute.q} />}
