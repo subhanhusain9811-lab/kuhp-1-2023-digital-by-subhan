@@ -1,0 +1,52 @@
+{
+  "name": "kuhp-digital",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "description": "KUHP DIGITAL — Pusat Referensi Hukum Pidana dalam Satu Genggaman. UU No. 1 Tahun 2023.",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "build:tunggal": "vite build --config vite.config.tunggal.ts --outDir dist-tunggal && python3 scripts/build_tunggal.py --dari dist-tunggal",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "node tests/verify_membaca.mjs && node tests/e2e.mjs && node tests/aksesibilitas.mjs",
+    "test:verifikasi": "python3 tests/validate_canonical.py",
+    "test:redaksi": "node tests/verify_membaca.mjs",
+    "test:e2e": "node tests/e2e.mjs",
+    "test:a11y": "node tests/aksesibilitas.mjs",
+    "test:pasang": "npx playwright install chromium"
+  },
+  "dependencies": {
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^4.5.5"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "@vitejs/plugin-react": "^4.3.3",
+    "playwright": "^1.49.1",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "wait-on": "^8.0.1"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/subhanhusain981-lab/kuhp-1-2023-digital-by-subhan.git"
+  },
+  "keywords": [
+    "kuhp",
+    "hukum-pidana",
+    "indonesia",
+    "uu-1-2023",
+    "offline-first",
+    "pwa",
+    "react",
+    "vite"
+  ]
+}
