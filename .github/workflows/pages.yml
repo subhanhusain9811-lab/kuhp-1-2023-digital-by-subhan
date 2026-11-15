@@ -1,1 +1,75 @@
+name: Publikasi ke GitHub Pages
 
+# Menerbitkan aplikasi ke https://<pengguna>.github.io/<nama-repo>/
+#
+# Catatan penting: GitHub Pages menyajikan repo dari SUBFOLDER, bukan akar
+# domain. Karena itu build memakai --base=/<nama-repo>/.
+# Nama repo dibaca otomatis dari github.event.repository.name, jadi workflow
+# ini tetap benar meski repo Anda beri nama lain.
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Izin minimum yang diperlukan untuk Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Batalkan publikasi yang masih berjalan bila ada push baru
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  bangun:
+    name: Bangun
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ambil kode
+        uses: actions/checkout@v4
+
+      - name: Pasang Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Pasang dependensi
+        run: npm ci
+
+      - name: Periksa tipe
+        run: npx tsc --noEmit
+
+      - name: Build untuk subfolder repo
+        run: npm run build -- --base=/${{ github.event.repository.name }}/
+
+      - name: Pastikan service worker sadar-subfolder
+        run: |
+          set -e
+          grep -q "new URL('./', self.location)" dist/sw.js \
+            || { echo "GAGAL: sw.js tidak menurunkan akar dari lokasinya sendiri"; exit 1; }
+          grep -q "/${{ github.event.repository.name }}/assets/" dist/index.html \
+            || { echo "GAGAL: index.html tidak memakai base subfolder"; exit 1; }
+          test -f dist/manifest.webmanifest
+          test -f dist/icons/icon.svg
+          echo "OK: build siap untuk /${{ github.event.repository.name }}/"
+
+      - name: Unggah artefak
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  terbit:
+    name: Terbitkan
+    needs: bangun
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy ke GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
