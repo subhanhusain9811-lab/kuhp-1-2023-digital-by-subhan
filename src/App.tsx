@@ -19,6 +19,7 @@ import { AssistantPage } from '@/features/ai/AssistantPage'
 import { ExportPage } from '@/features/export/ExportPage'
 import { SettingsPage } from '@/features/settings/SettingsPage'
 import { AboutPage } from '@/features/about/AboutPage'
+import { PenyesuaianPage } from '@/features/penyesuaian/PenyesuaianPage'
 import { IkonMenu, IkonCari, IkonTema, IkonMatahari } from '@/components/Ikon'
 
 const LABEL_RUTE: Record<string, string> = {
@@ -34,6 +35,7 @@ const LABEL_RUTE: Record<string, string> = {
   ekspor: 'Ekspor & Cetak',
   pengaturan: 'Pengaturan',
   tentang: 'Sumber & Integritas',
+  penyesuaian: 'UU 1/2026 · Penyesuaian Pidana',
 }
 
 export default function App() {
@@ -111,9 +113,9 @@ export default function App() {
   /* judul dokumen */
   useEffect(() => {
     if (rute.nama === 'baca') {
-      document.title = `Pasal ${rute.pasal} — KUHP Digital by Subhan`
+      document.title = `Pasal ${rute.pasal} — KUHP Digital`
     } else {
-      document.title = `${LABEL_RUTE[rute.nama] ?? 'KUHP Digital by Subhan'} — KUHP Digital by Subhan`
+      document.title = `${LABEL_RUTE[rute.nama] ?? 'KUHP Digital'} — KUHP Digital`
     }
   }, [rute])
 
@@ -127,7 +129,7 @@ export default function App() {
   const judul =
     rute.nama === 'baca' ? `Pasal ${rute.pasal}`
       : rute.nama === 'cari' ? 'Pencarian'
-        : LABEL_RUTE[rute.nama] ?? 'KUHP Digital by Subhan'
+        : LABEL_RUTE[rute.nama] ?? 'KUHP Digital'
 
   return (
     <div className="app" data-sidebar={sidebarBuka ? 'buka' : 'tutup'}>
@@ -188,6 +190,7 @@ export default function App() {
           {rute.nama === 'ekspor' && <ExportPage />}
           {rute.nama === 'pengaturan' && <SettingsPage />}
           {rute.nama === 'tentang' && <AboutPage />}
+          {rute.nama === 'penyesuaian' && <PenyesuaianPage />}
         </main>
       </div>
 

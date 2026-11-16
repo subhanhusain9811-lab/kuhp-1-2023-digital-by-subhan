@@ -8,6 +8,9 @@ import { useStore } from '@/store/useStore'
 import { cari, SARAN_POPULER } from '@/search/query'
 import { waktuRelatif, htmlKeTeks } from '@/lib/format'
 import { Kartu, Chip, Tombol, Kosong, Label } from '@/components/ui'
+import { labelBerlakuLengkap } from '@/lib/statusBerlaku'
+import { meta2026 } from '@/lib/lapisan2026'
+import { KartuKredit } from '@/components/KartuKredit'
 import {
   IkonCari, IkonKanan, IkonBuku, IkonJam, IkonSimpan, IkonPalu,
   IkonPetir, IkonTopik, IkonInfo, IkonPerisai, IkonBerkas, IkonDaftar,
@@ -50,15 +53,13 @@ export function Dashboard() {
           // Lapisan: (1) lapisan gelap di sisi teks agar teks putih ≥4.5:1,
           // (2) cincin cahaya Telegram-blue di kanan, (3) alas gradien pekat.
           background:
-            'radial-gradient(110% 130% at 92% 10%, rgba(245,158,11,.52) 0%, rgba(245,158,11,.18) 42%, rgba(245,158,11,0) 68%),'
-            + 'radial-gradient(95% 100% at 85% 95%, rgba(225,29,72,.45) 0%, rgba(225,29,72,0) 62%),'
-            + 'linear-gradient(125deg, #1E1B4B 0%, #7F1D1D 38%, #BE123C 72%, #D97706 100%)',
-          backgroundSize: '160% 160%',
-          animation: 'heroPulse 12s ease infinite',
+            'linear-gradient(100deg, rgba(8,52,74,.78) 0%, rgba(8,52,74,.55) 38%, rgba(8,52,74,.18) 68%, rgba(8,52,74,0) 100%),'
+            + 'radial-gradient(120% 130% at 88% 6%, rgba(42,171,238,.42) 0%, rgba(42,171,238,.12) 48%, rgba(42,171,238,0) 66%),'
+            + 'radial-gradient(90% 90% at 100% 100%, rgba(42,171,238,.24) 0%, rgba(42,171,238,0) 60%),'
+            + 'linear-gradient(118deg, #0C4460 0%, #14638C 54%, #17749F 100%)',
           color: '#fff',
           overflow: 'hidden',
-          boxShadow: '0 14px 36px rgba(136, 19, 55, .34)',
-          border: '1px solid rgba(251, 191, 36, .28)',
+          boxShadow: '0 10px 30px rgba(10, 59, 84, .22)',
         }}
       >
         <div aria-hidden="true" style={{
@@ -78,9 +79,9 @@ export function Dashboard() {
 
           <h1 style={{
             fontSize: 30, lineHeight: 1.14, fontWeight: 800,
-            letterSpacing: '-.025em', marginBottom: 8, maxWidth: 680,
+            letterSpacing: '-.025em', marginBottom: 8, maxWidth: 620,
           }}>
-            KUHP Digital <span style={{ color: '#FCD34D', fontWeight: 700, fontSize: '0.82em' }}>by Subhan</span>
+            KUHP Digital
           </h1>
           <p style={{ fontSize: 15, lineHeight: 1.55, opacity: .93, maxWidth: 540, fontWeight: 500 }}>
             Pusat Referensi Hukum Pidana dalam Satu Genggaman.{' '}
@@ -429,9 +430,10 @@ export function Dashboard() {
           <div><b>Dasar hukum:</b> {db.meta.dasarHukum}</div>
           <div><b>Diundangkan:</b> {db.meta.diundangkan}</div>
           <div><b>Lembaran Negara:</b> {db.meta.lembaranNegara}</div>
-          <div><b>Mulai berlaku:</b> {db.meta.mulaiBerlaku}</div>
+          <div><b>Mulai berlaku:</b> <b style={{ color: 'var(--ok, #0a7d4f)' }}>{labelBerlakuLengkap()}</b></div>
           <div><b>Versi data:</b> {db.meta.versiData} ({db.meta.tanggalBangun})</div>
           <div><b>Penjelasan:</b> {st.kataPenjelasan.toLocaleString('id-ID')} kata</div>
+          <div><b>Penyesuaian:</b> {meta2026.nomor} — {meta2026.jumlahPasalDisentuh} pasal lama + 1 pasal baru</div>
         </div>
         <hr className="divider" style={{ margin: '12px 0' }} />
         <p style={{ fontSize: 12, color: 'var(--muted)', lineHeight: 1.65, margin: 0 }}>
@@ -440,6 +442,8 @@ export function Dashboard() {
           hanya di perangkat Anda.
         </p>
       </Kartu>
+
+      <KartuKredit ringkas />
     </div>
   )
 }

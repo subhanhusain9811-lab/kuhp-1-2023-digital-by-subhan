@@ -9,6 +9,7 @@ import { db, htmlKeTeks } from '@/lib/data'
 import { useStore } from '@/store/useStore'
 import { unduh } from '@/lib/format'
 import { Kartu, Tombol, Label, Segmen, Info } from '@/components/ui'
+import { KREDIT_LENGKAP } from '@/components/KartuKredit'
 import {
   IkonEkspor, IkonCetak, IkonUnduh, IkonBerkas, IkonPerisai,
   IkonInfo, IkonBuku, IkonJam,
@@ -54,6 +55,7 @@ export function ExportPage() {
     baris.push(`Sumber data: ${db.meta.sumber.utama}`)
     baris.push(`Verifikasi: ${db.meta.sumber.verifikasi}`)
     baris.push(`Diekspor: ${new Date().toLocaleString('id-ID')}`)
+    baris.push(`Dibuat dan dialihkan ke bentuk digital oleh ${KREDIT_LENGKAP}`)
     baris.push('')
     baris.push('CATATAN: Redaksi pasal disalin apa adanya. Ringkasan ancaman pidana')
     baris.push('dihasilkan otomatis dan bukan bagian dari teks undang-undang.')
@@ -179,11 +181,13 @@ export function ExportPage() {
   <p>Rentang Pasal ${rentang.a}–${rentang.b} · ${pasalList.length} pasal</p>
   <p>Diundangkan ${esc(db.meta.diundangkan)} · ${esc(db.meta.lembaranNegara)}</p>
   <p>Diekspor dari KUHP DIGITAL pada ${new Date().toLocaleString('id-ID')}</p>
+  <p>Dibuat dan dialihkan ke bentuk digital oleh ${esc(KREDIT_LENGKAP)}</p>
 </header>
 ${isiPasal}
 <footer>
   Redaksi pasal disalin apa adanya dari sumber resmi. Ringkasan ancaman pidana, bila ada,
   dihasilkan otomatis dan bukan bagian dari teks undang-undang. Dokumen ini bukan nasihat hukum.
+  Bunyi undang-undang bersumber dari Lembaran Negara Republik Indonesia dan bukan milik perorangan.
 </footer>
 </body></html>`
   }

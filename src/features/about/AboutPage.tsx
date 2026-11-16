@@ -7,6 +7,8 @@ import { useMemo, useState } from 'react'
 import { db, htmlKeTeks } from '@/lib/data'
 import { useStore } from '@/store/useStore'
 import { Kartu, Chip, Label, Segmen, Info } from '@/components/ui'
+import { KartuKredit } from '@/components/KartuKredit'
+import { labelBerlakuLengkap, DASAR_BERLAKU } from '@/lib/statusBerlaku'
 import {
   IkonPerisai, IkonInfo, IkonBerkas, IkonCentang, IkonPeringatan,
   IkonCari, IkonGrafik, IkonSkala, IkonTutup, IkonKanan,
@@ -75,7 +77,8 @@ export function AboutPage() {
             <Info label="Dasar hukum" nilai={db.meta.dasarHukum} />
             <Info label="Diundangkan" nilai={db.meta.diundangkan} />
             <Info label="Lembaran Negara" nilai={db.meta.lembaranNegara} />
-            <Info label="Mulai berlaku" nilai={db.meta.mulaiBerlaku} />
+            <Info label="Mulai berlaku" nilai={labelBerlakuLengkap()} />
+            <Info label="Dasar" nilai={DASAR_BERLAKU} />
             <Info label="Versi data" nilai={`${db.meta.versiData} · ${db.meta.tanggalBangun}`} />
           </Kartu>
 
@@ -161,6 +164,8 @@ export function AboutPage() {
               </div>
             </div>
           </Kartu>
+
+          <KartuKredit />
         </div>
       )}
 

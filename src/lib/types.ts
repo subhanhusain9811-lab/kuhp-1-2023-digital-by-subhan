@@ -237,3 +237,120 @@ export type Rute =
   | { nama: 'ekspor' }
   | { nama: 'pengaturan' }
   | { nama: 'tentang'; sub?: 'koreksi' | 'sumber' }
+  | { nama: 'penyesuaian' }
+
+/* ============================================================
+   LAPISAN UU NO. 1 TAHUN 2026 (PENYESUAIAN PIDANA)
+   Disimpan TERPISAH dari naskah asli UU 1/2023. Naskah asli tidak
+   pernah ditimpa — lapisan ini hanya memberi keterangan bahwa sebuah
+   pasal telah diubah/dihapus/disisipkan, beserta teks barunya.
+   ============================================================ */
+
+export type JenisPerubahan =
+  | 'diubah'
+  | 'dihapus'
+  | 'ditambah_ayat'
+  | 'disisipkan'
+  | 'penjelasan'
+
+export interface Ayat2026 {
+  nomor: number
+  teks: string
+}
+
+/** Teks pasal menurut naskah UU 1/2026 (hanya untuk pasal yang bersalinan) */
+export interface SalinanPasal2026 {
+  nomor: string
+  teks?: string
+  ayat?: Ayat2026[]
+}
+
+export interface Butir2026 {
+  butir: number
+  /** Perintah perubahan, verbatim dari Pasal VII UU 1/2026 */
+  perintah: string
+  /** Nomor pasal KUHP yang disentuh butir ini */
+  pasal: string[]
+}
+
+export interface MetaUU2026 {
+  judul: string
+  nomor: string
+  diundangkan: string
+  lembaranNegara: string
+  mulaiBerlaku: string
+  mengubah: string
+  dasarPasal: string
+  jumlahButir: number
+  jumlahPasalDisentuh: number
+  jumlahPasalLama?: number
+  jumlahPasalBaru?: number
+  sumber: { utama: string; pembanding: string; catatan: string }
+  penjelasan?: { jumlah: number; sumber: string; verifikasi: string; catatan: string }
+  kekeliruanPenomoran?: string[]
+  versiData: string
+  tanggalBangun: string
+}
+
+export interface PemetaanPasangan {
+  /** Rujukan pada UU lama, mis. "2 ayat (1)" */
+  dari: string
+  /** Nomor pasal KUHP baru yang menggantikannya */
+  ke: string[]
+}
+
+export interface PemetaanEntri {
+  huruf: string
+  /** Teks entri pada Pasal 622 ayat (1), verbatim */
+  isi: string
+  /** Ayat Pasal 622 yang mengatur pemetaannya */
+  ayat?: number
+  /** Teks ayat penjelas, verbatim */
+  penjelas?: string
+  pasangan?: PemetaanPasangan[]
+  /** "dicabut" bila UU lama dicabut tanpa pemetaan */
+  status?: 'dicabut'
+}
+
+export interface PetaLamaBaru {
+  meta: {
+    pasal: string
+    judul: string
+    sumber: string
+    jumlahHuruf: number
+    jumlahDicabut: number
+    jumlahPasangan: number
+    catatan: string
+  }
+  entri: PemetaanEntri[]
+}
+
+export interface EntriLampiran {
+  pasal: number
+  ayat?: number | string | null
+  teks: string
+  /** Setiap perbaikan galat OCR pada baris ini, dicatat terbuka */
+  koreksiOcr: { dari: string; jadi: string }[]
+}
+
+export interface Lampiran2026 {
+  judul: string
+  dasar: string
+  entri: EntriLampiran[]
+  jumlah: number
+  sumber: string
+  metode: string
+  catatan: string
+}
+
+export interface DataUU2026 {
+  meta: MetaUU2026
+  butir: Butir2026[]
+  salinanLengkap: Record<string, SalinanPasal2026>
+  dihapus: string[]
+  disisipkan: { nomor: string; diAntara: string[]; butir: number }[]
+  petaLamaBaru: PetaLamaBaru
+  /** Penjelasan pasal menurut UU 1/2026, verbatim, dipetakan per nomor pasal */
+  penjelasan2026: Record<string, string>
+  lampiran: { II: Lampiran2026 }
+}

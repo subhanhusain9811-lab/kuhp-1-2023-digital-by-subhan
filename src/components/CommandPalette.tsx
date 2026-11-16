@@ -43,6 +43,7 @@ export function CommandPalette() {
     { id: 'm-toc', label: 'Daftar isi', ikon: <IkonDaftar size={15} />, jalankan: () => navigasi({ nama: 'daftar-isi' }) },
     { id: 'm-p1', label: 'Baca Pasal 1', ikon: <IkonBuku size={15} />, jalankan: () => navigasi({ nama: 'baca', pasal: 1 }) },
     { id: 'm-map', label: 'Pemetaan hukum', ikon: <IkonPemetaan size={15} />, jalankan: () => navigasi({ nama: 'pemetaan' }) },
+    { id: 'm-2026', label: 'UU 1/2026 — Penyesuaian Pidana', ikon: <IkonPerisai size={15} />, jalankan: () => navigasi({ nama: 'penyesuaian' }) },
     { id: 'm-lib', label: 'Bookmark & riwayat', ikon: <IkonSimpan size={15} />, jalankan: () => navigasi({ nama: 'pustaka' }) },
     { id: 'm-note', label: 'Catatan pribadi', ikon: <IkonCatatan size={15} />, jalankan: () => navigasi({ nama: 'catatan' }) },
     { id: 'm-ai', label: 'Asisten hukum', ikon: <IkonAsisten size={15} />, jalankan: () => navigasi({ nama: 'asisten' }) },

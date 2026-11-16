@@ -19,6 +19,7 @@ export function ruteKeHash(r: Rute): string {
     case 'ekspor': return '#/ekspor'
     case 'pengaturan': return '#/pengaturan'
     case 'tentang': return r.sub ? `#/tentang/${r.sub}` : '#/tentang'
+    case 'penyesuaian': return '#/penyesuaian'
     default: return '#/'
   }
 }
@@ -51,6 +52,7 @@ export function hashKeRute(hash: string): Rute {
     case 'pengaturan': return { nama: 'pengaturan' }
     case 'tentang':
       return { nama: 'tentang', sub: (seg[1] as 'koreksi' | 'sumber' | undefined) }
+    case 'penyesuaian': return { nama: 'penyesuaian' }
     default: return { nama: 'dashboard' }
   }
 }

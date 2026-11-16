@@ -9,6 +9,7 @@ import {
   IkonCatatan, IkonAsisten, IkonEkspor, IkonPengaturan, IkonPerisai,
   IkonSkala, IkonTema, IkonMatahari, IkonTutup, IkonInfo,
 } from './Ikon'
+import { KREDIT_KALIMAT } from './KartuKredit'
 
 export function Sidebar() {
   const rute = useStore(s => s.rute)
@@ -46,7 +47,7 @@ export function Sidebar() {
         </div>
         <div className="grow" style={{ minWidth: 0 }}>
           <div className="brand-name">KUHP <span style={{ color: 'var(--brand-600)' }}>Digital</span></div>
-          <div className="brand-sub" style={{ fontWeight: 650, color: 'var(--brand-700)' }}>by Subhan · UU 1/2023</div>
+          <div className="brand-sub">UU No. 1 Tahun 2023</div>
         </div>
         <button
           className="btn btn-icon btn-ghost drawer-tutup"
@@ -65,6 +66,7 @@ export function Sidebar() {
         {item('daftar-isi', 'Daftar Isi', <IkonDaftar size={19} />)}
         {item('baca', 'Baca Pasal', <IkonBuku size={19} />, undefined, { nama: 'baca', pasal: 1 })}
         {item('pemetaan', 'Pemetaan Hukum', <IkonPemetaan size={19} />)}
+        {item('penyesuaian', 'UU 1/2026 · Penyesuaian', <IkonPerisai size={19} />)}
 
         <div className="nav-group-label">Pustaka Saya</div>
         {item('pustaka', 'Bookmark & Riwayat', <IkonSimpan size={19} />, bookmark.length)}
@@ -79,8 +81,11 @@ export function Sidebar() {
       </nav>
 
       <div className="sidebar-foot">
-        <div style={{ fontSize: 10, color: 'var(--muted)', lineHeight: 1.45, marginBottom: 6, opacity: .88 }}>
-          Karya: <b>subhan_jago</b> (murid langsung dari Opah R. Yapari [Nenek Ompong, Penguasa Waktu] dan Kak Budi Gagah [Toreng])
+        <div style={{
+          fontSize: 10.5, lineHeight: 1.6, color: 'var(--muted)',
+          padding: '0 2px 8px', textAlign: 'center',
+        }}>
+          {KREDIT_KALIMAT}
         </div>
         <div className="verifikasi-pill">
           <IkonPerisai size={14} style={{ flex: 'none', marginTop: 1 }} />
