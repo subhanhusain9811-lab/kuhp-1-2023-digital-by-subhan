@@ -14,6 +14,7 @@ import type { JenisPerubahan } from '@/lib/types'
 import { PetaLamaBaru } from './PetaLamaBaru'
 import { KalkulatorDenda } from './KalkulatorDenda'
 import { LampiranII } from './LampiranII'
+import { LampiranI } from './LampiranI'
 
 function jenisDari(perintah: string): JenisPerubahan {
   const p = perintah.toLowerCase()
@@ -27,7 +28,7 @@ function jenisDari(perintah: string): JenisPerubahan {
 const SEMUA_JENIS: JenisPerubahan[] = ['diubah', 'ditambah_ayat', 'disisipkan', 'dihapus', 'penjelasan']
 
 export function PenyesuaianPage() {
-  const [tab, setTab] = useState<'butir' | 'peta' | 'denda' | 'lampiran'>('butir')
+  const [tab, setTab] = useState<'butir' | 'peta' | 'denda' | 'lampiran' | 'lampiran1'>('butir')
   const [saring, setSaring] = useState<JenisPerubahan | null>(null)
   const [buka, setBuka] = useState<number | null>(null)
 
@@ -65,7 +66,7 @@ export function PenyesuaianPage() {
 
       {/* ===== Tab ===== */}
       <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
-        {([['butir', '55 Butir Perubahan'], ['peta', 'Peta KUHP Lama → Baru'], ['denda', 'Hitung Denda → Penjara'], ['lampiran', 'Lampiran II · Narkotika']] as const).map(([id, label]) => (
+        {([['butir', '55 Butir Perubahan'], ['peta', 'Peta KUHP Lama → Baru'], ['denda', 'Hitung Denda → Penjara'], ['lampiran', 'Lampiran II · Narkotika'], ['lampiran1', 'Lampiran I · 186 UU']] as const).map(([id, label]) => (
           <button
             key={id}
             onClick={() => setTab(id)}
@@ -79,7 +80,7 @@ export function PenyesuaianPage() {
         ))}
       </div>
 
-      {tab === 'lampiran' ? <LampiranII /> : tab === 'denda' ? <KalkulatorDenda /> : tab === 'peta' ? <PetaLamaBaru /> : (<>
+      {tab === 'lampiran1' ? <LampiranI /> : tab === 'lampiran' ? <LampiranII /> : tab === 'denda' ? <KalkulatorDenda /> : tab === 'peta' ? <PetaLamaBaru /> : (<>
 
       {/* ===== Identitas & status ===== */}
       <Kartu style={{ background: 'var(--surface-2)' }}>

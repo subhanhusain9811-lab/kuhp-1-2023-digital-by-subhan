@@ -10,6 +10,8 @@ import { useStore } from '@/store/useStore'
 import { unduh } from '@/lib/format'
 import { Kartu, Tombol, Label, Segmen, Info } from '@/components/ui'
 import { KREDIT_LENGKAP } from '@/components/KartuKredit'
+import { statusPasal } from '@/lib/lapisan2026'
+import { catatan2026, peringatan2026 } from '@/lib/ujiEkspor'
 import {
   IkonEkspor, IkonCetak, IkonUnduh, IkonBerkas, IkonPerisai,
   IkonInfo, IkonBuku, IkonJam,
@@ -57,6 +59,8 @@ export function ExportPage() {
     baris.push(`Diekspor: ${new Date().toLocaleString('id-ID')}`)
     baris.push(`Dibuat dan dialihkan ke bentuk digital oleh ${KREDIT_LENGKAP}`)
     baris.push('')
+    baris.push(...peringatan2026(
+      pasalList.filter(p => statusPasal(p.nomor).tersentuh).length, pasalList.length))
     baris.push('CATATAN: Redaksi pasal disalin apa adanya. Ringkasan ancaman pidana')
     baris.push('dihasilkan otomatis dan bukan bagian dari teks undang-undang.')
     baris.push('')
@@ -74,6 +78,7 @@ export function ExportPage() {
         baris.push('')
       }
       baris.push(`Pasal ${p.nomor}`)
+      for (const cat of catatan2026(p.nomor)) baris.push(cat)
       if (p.bagianJudul) baris.push(`[Bagian ${p.bagian} — ${p.bagianJudul}]`)
       if (p.paragrafJudul) baris.push(`[Paragraf ${p.paragraf} — ${p.paragrafJudul}]`)
       baris.push('')
@@ -143,8 +148,17 @@ export function ExportPage() {
       const penj = denganPenjelasan
         ? `<div class="penj"><h4>Penjelasan</h4><p>${esc(htmlKeTeks(p.penjelasan))}</p></div>`
         : ''
+      const cat = catatan2026(p.nomor)
+      const ada2026 = cat.length > 0
+      const st = statusPasal(p.nomor)
+      const warna = st.dihapus ? '#fee2e2' : st.baru ? '#d1fae5' : '#fef3c7'
+      const garis = st.dihapus ? '#b91c1c' : st.baru ? '#047857' : '#b45309'
+      const kotak2026 = ada2026
+        ? `<div style="background:${warna};border-left:4px solid ${garis};padding:8px 11px;margin:8px 0;font-size:10.5pt;font-weight:700">${cat.map(esc).join('<br>')}</div>`
+        : ''
       return `<article class="pasal" id="p${p.nomor}">
   <h3>Pasal ${p.nomor}</h3>
+  ${kotak2026}
   <div class="lokasi">${esc(p.buku)} · Bab ${esc(p.bab)} — ${esc(p.babJudul)}${p.bagianJudul ? ` · Bagian ${esc(p.bagian ?? '')} ${esc(p.bagianJudul)}` : ''}</div>
   ${badan}${penj}
 </article>`
@@ -179,6 +193,12 @@ export function ExportPage() {
 <header>
   <h1>Undang-Undang Nomor 1 Tahun 2023 tentang Kitab Undang-Undang Hukum Pidana</h1>
   <p>Rentang Pasal ${rentang.a}–${rentang.b} · ${pasalList.length} pasal</p>
+  ${pasalList.filter(p => statusPasal(p.nomor).tersentuh).length > 0
+    ? `<p style="background:#fef3c7;border-left:4px solid #b45309;padding:9px 12px;font-weight:700">
+        PERHATIAN: ${pasalList.filter(p => statusPasal(p.nomor).tersentuh).length} dari ${pasalList.length}
+        pasal dalam rentang ini telah diubah oleh UU No. 1 Tahun 2026 tentang Penyesuaian Pidana.
+        Teks yang tercetak adalah naskah asli UU No. 1 Tahun 2023.</p>`
+    : ''}
   <p>Diundangkan ${esc(db.meta.diundangkan)} · ${esc(db.meta.lembaranNegara)}</p>
   <p>Diekspor dari KUHP DIGITAL pada ${new Date().toLocaleString('id-ID')}</p>
   <p>Dibuat dan dialihkan ke bentuk digital oleh ${esc(KREDIT_LENGKAP)}</p>

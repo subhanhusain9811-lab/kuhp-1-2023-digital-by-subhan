@@ -6,6 +6,8 @@
    ============================================================ */
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { db } from '@/lib/data'
+import { statusPasal } from '@/lib/lapisan2026'
+import { LencanaPerubahan } from '@/components/LencanaPerubahan'
 import { useStore } from '@/store/useStore'
 import { cari, uraiKueri, saranKueri, SARAN_POPULER } from '@/search/query'
 import { KONSEP } from '@/search/concepts'
@@ -37,6 +39,7 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
   const [filterJenis, setFilterJenis] = useState<JenisCocok | null>(null)
   const [filterBuku, setFilterBuku] = useState<string>('')
   const [filterBab, setFilterBab] = useState<string>('')
+  const [hanya2026, setHanya2026] = useState(false)
   const refInput = useRef<HTMLInputElement>(null)
 
   // Kueri baru dari luar (deep link / kotak cari global) harus memulai
@@ -58,7 +61,8 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
   const urai = useMemo(() => qAktif.trim() ? uraiKueri(qAktif) : null, [qAktif])
   const saran = useMemo(() => hasil.length === 0 && qAktif.trim() ? saranKueri(qAktif) : [], [hasil, qAktif])
 
-  const tampil = filterJenis ? hasil.filter(h => h.jenis.includes(filterJenis)) : hasil
+  const setelahJenis = filterJenis ? hasil.filter(h => h.jenis.includes(filterJenis)) : hasil
+  const tampil = hanya2026 ? setelahJenis.filter(h => statusPasal(h.pasal.nomor).tersentuh) : setelahJenis
 
   const kirim = (teks: string) => {
     const t = teks.trim()
@@ -174,7 +178,7 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
         <>
           {/* Ringkasan pemahaman kueri */}
           {urai && (
-            <Kartu pad={14} style={{ marginBottom: 12, background: 'var(--surface-2)' }}>
+            <Kartu pad={12} style={{ marginBottom: 12, background: 'var(--surface-2)' }}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
                 <Label>Kueri dipahami sebagai</Label>
                 {urai.nomorPasal != null && (
@@ -221,9 +225,9 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
                 </button>
               )
             })}
-            {(filterJenis || filterBuku || filterBab) && (
+            {(filterJenis || filterBuku || filterBab || hanya2026) && (
               <button className="chip" style={{ cursor: 'pointer', fontSize: 11.5, padding: '5px 10px' }}
-                onClick={() => { setFilterJenis(null); setFilterBuku(''); setFilterBab('') }}>
+                onClick={() => { setFilterJenis(null); setFilterBuku(''); setFilterBab(''); setHanya2026(false) }}>
                 <IkonFilterX size={11} /> Reset
               </button>
             )}
@@ -246,7 +250,35 @@ export function SearchPage({ qAwal }: { qAwal?: string }) {
                 <option key={b.buku + b.kode} value={b.kode}>Bab {b.kode} — {b.judul.slice(0, 42)}</option>
               ))}
             </select>
+            <button
+              onClick={() => setHanya2026(v => !v)}
+              aria-pressed={hanya2026}
+              title="Saring hanya pasal yang diubah, dihapus, atau disisipkan UU No. 1 Tahun 2026"
+              style={{
+                flex: '0 1 auto', fontSize: 12, fontWeight: 700, padding: '7px 12px',
+                borderRadius: 99, cursor: 'pointer', minHeight: 34,
+                border: '1px solid ' + (hanya2026 ? 'var(--brand-600,#1d4ed8)' : 'var(--border)'),
+                background: hanya2026 ? 'var(--brand-600,#1d4ed8)' : 'transparent',
+                color: hanya2026 ? '#fff' : 'var(--muted)',
+              }}
+            >
+              Hanya yang diubah 2026
+            </button>
           </div>
+
+          {hanya2026 && (
+            <div style={{
+              display: 'flex', gap: 8, padding: '9px 12px', borderRadius: 10,
+              background: 'var(--surface-2)', fontSize: 12, marginBottom: 12, lineHeight: 1.55,
+            }}>
+              <IkonInfo size={15} style={{ flex: 'none', marginTop: 1, color: 'var(--brand-700)' }} />
+              <span>
+                Menampilkan hanya pasal yang disentuh <b>UU No. 1 Tahun 2026</b> tentang Penyesuaian
+                Pidana. Teks pasal yang tampil tetap naskah asli 2023 — perubahan disajikan sebagai
+                lapisan keterangan di halaman pasal.
+              </span>
+            </div>
+          )}
 
           {adaSemantikSaja && (
             <div style={{
@@ -331,6 +363,7 @@ function HasilKartu({
             <span style={{ fontSize: 11.5, color: 'var(--muted)', fontWeight: 650 }}>
               Bab {p.bab} · {p.buku === 'BUKU KESATU' ? 'Buku Kesatu' : 'Buku Kedua'}
             </span>
+            <LencanaPerubahan nomor={p.nomor} ringkas />
             <span style={{ marginLeft: 'auto', display: 'flex', gap: 4 }}>
               {h.jenis.map(j => (
                 <Chip key={j} nada={LABEL_JENIS[j].nada} ikon={LABEL_JENIS[j].ikon}>
