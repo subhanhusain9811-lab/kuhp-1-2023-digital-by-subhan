@@ -9,6 +9,7 @@ import './styles/base.css'
 import './styles/app.css'
 import './styles/reader.css'
 import './styles/print.css'
+import './styles/emas.css'
 
 const el = document.getElementById('root')
 if (!el) throw new Error('Elemen #root tidak ditemukan')

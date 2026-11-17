@@ -141,6 +141,7 @@ export default function App() {
 
       <div className="main">
         <header className="topbar">
+          <div className="bilah-baca" aria-hidden="true" />
           <button
             className="btn btn-icon btn-ghost tampil-mobile"
             onClick={() => setSidebar(true)}

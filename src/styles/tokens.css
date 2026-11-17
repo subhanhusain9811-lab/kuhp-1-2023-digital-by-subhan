@@ -5,16 +5,16 @@
    ============================================================ */
 
 :root {
-  /* Brand — Sovereign Crimson, Royal Indigo & Gold Blaze */
-  --brand-50:  #FFF1F2;
-  --brand-100: #FFE4E6;
-  --brand-200: #FECDD3;
-  --brand-300: #FDA4AF;
-  --brand-400: #FB7185;
-  --brand-500: #E11D48;
-  --brand-600: #BE123C;
-  --brand-700: #9F1239;   /* teks di atas brand-50 / putih: >7:1 */
-  --brand-800: #881337;
+  /* Brand */
+  --brand-50:  #E8F5FE;
+  --brand-100: #CFEBFB;
+  --brand-200: #A6DBF7;
+  --brand-300: #6EC6F2;
+  --brand-400: #42B4EE;
+  --brand-500: #2AABEE;
+  --brand-600: #1A8CC4;
+  --brand-700: #14638C;   /* teks di atas brand-50 / putih: 6.5:1 */
+  --brand-800: #0E4E6E;
 
   /* Netral */
   --bg:        #F7F9FB;
@@ -71,9 +71,26 @@
   --dur-fast: 140ms;
 
   /* Permukaan aksen pekat — dipakai agar teks putih tetap terbaca */
-  --aksen-1: #BE123C;
-  --aksen-2: #881337;
-  --aksen-3: #4C0519;
+  --aksen-1: #1573A3;
+  --aksen-2: #0E4E6E;
+  --aksen-3: #0A3B54;
+
+
+  /* Hero beranda — dipakai Dashboard.tsx lewat token */
+  --hero-tirai-a: rgba(8,52,74,.78);
+  --hero-tirai-b: rgba(8,52,74,.55);
+  --hero-tirai-c: rgba(8,52,74,.18);
+  --hero-tirai-d: rgba(8,52,74,0);
+  --hero-cahaya-a: rgba(42,171,238,.42);
+  --hero-cahaya-b: rgba(42,171,238,.12);
+  --hero-cahaya-c: rgba(42,171,238,.24);
+  --hero-1: #0C4460;
+  --hero-2: #14638C;
+  --hero-3: #17749F;
+  --hero-bayang: 0 10px 30px rgba(10, 59, 84, .22);
+  --hero-kotak-bg: #FFFFFF;
+  --hero-kotak-teks: #16222E;
+  --hero-kotak-bayang: 0 6px 20px rgba(0,0,0,.16);
 
   /* Ukuran baca (dapat diubah pengguna) */
   --reader-fs: 17px;
@@ -82,15 +99,15 @@
 }
 
 html[data-tema="gelap"] {
-  --brand-50:  #3B0A1E;
-  --brand-100: #500724;
-  --brand-200: #881337;
-  --brand-300: #BE123C;
-  --brand-400: #E11D48;
-  --brand-500: #F43F5E;
-  --brand-600: #FB7185;
-  --brand-700: #FDA4AF;   /* teks aksen di atas --brand-50 gelap: ≥7:1 */
-  --brand-800: #FFE4E6;
+  --brand-50:  #12303F;
+  --brand-100: #14384A;
+  --brand-200: #1A4A61;
+  --brand-300: #23617E;
+  --brand-400: #2C86AC;
+  --brand-500: #2AABEE;
+  --brand-600: #58C8F8;
+  --brand-700: #8FDBFB;   /* teks aksen di atas --brand-50 gelap: ≥7:1 */
+  --brand-800: #BAE8FD;
 
   --bg:        #0E1621;
   --surface:   #17212B;

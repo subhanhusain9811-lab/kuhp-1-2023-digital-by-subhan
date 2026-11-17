@@ -78,20 +78,20 @@ export function LampiranI() {
         </p>
         <div style={{
           fontSize: 11.5, lineHeight: 1.6, padding: '9px 11px', borderRadius: 8,
-          background: '#fef3c7', color: '#92400e', border: '1px solid #fcd34d',
+          background: 'var(--warn-bg)', color: 'var(--warn)', border: '1px solid var(--warn)',
         }}>
           <strong>Perlu diketahui:</strong> daftar ini disusun dengan membaca silang dua sumber OCR
           independen — PDF salinan resmi dan basis data pihak ketiga. Keduanya hasil pindaian,
           jadi setiap baris tetap <strong>wajib dicocokkan ke PDF cetak</strong> sebelum dipakai
           sebagai rujukan resmi. Kolom halaman disediakan untuk itu.
         </div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 10, fontSize: 11.5 }}>
-          <span><strong style={{ color: '#065f46' }}>{meta.nomorTerverifikasi}</strong> nomor terverifikasi</span>
+        <div style={{ display: 'flex', gap: '6px 14px', flexWrap: 'wrap', marginTop: 10, fontSize: 11.5, lineHeight: 1.6 }}>
+          <span><strong style={{ color: 'var(--ok)' }}>{meta.nomorTerverifikasi}</strong> nomor terverifikasi</span>
           <span>
-            <strong style={{ color: '#065f46' }}>{meta.nomorDiverifikasiManusia}</strong>
+            <strong style={{ color: 'var(--ok)' }}>{meta.nomorDiverifikasiManusia}</strong>
             {' '}di antaranya dibaca langsung dari PDF
           </span>
-          <span><strong style={{ color: '#92400e' }}>{meta.nomorPerluDiperiksa}</strong> perlu dicek</span>
+          <span><strong style={{ color: 'var(--warn)' }}>{meta.nomorPerluDiperiksa}</strong> perlu dicek</span>
           <span>
             <strong style={{ color: 'var(--text)' }}>{meta.barisTerkonfirmasi.toLocaleString('id-ID')}</strong>
             {' '}dari {meta.jumlahBaris.toLocaleString('id-ID')} baris teks cocok ({' '}
@@ -141,8 +141,8 @@ export function LampiranI() {
             Tidak ada yang cocok dengan “{kueri}”.
           </p>
           {/narkotika|psikotropika|prekursor/i.test(kueri) && (
-            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65, color: '#92400e',
-                        background: '#fef3c7', padding: '9px 11px', borderRadius: 8 }}>
+            <p style={{ margin: 0, fontSize: 12.5, lineHeight: 1.65, color: 'var(--warn)',
+                        background: 'var(--warn-bg)', padding: '9px 11px', borderRadius: 8 }}>
               Narkotika tidak ada di Lampiran I — perubahannya diatur tersendiri dalam{' '}
               <strong>Lampiran II</strong>. Coba buka tab “Lampiran II · Narkotika”.
             </p>
@@ -211,7 +211,7 @@ export function LampiranI() {
             {terbuka && (
               <div style={{ marginTop: 11, borderTop: '1px solid var(--border)', paddingTop: 10 }}>
                 {e.catatan.length > 0 && (
-                  <p style={{ fontSize: 11, color: '#92400e', margin: '0 0 8px' }}>
+                  <p style={{ fontSize: 11, color: 'var(--warn)', margin: '0 0 8px' }}>
                     Catatan penyuntingan: {e.catatan.join('; ')}.
                   </p>
                 )}
@@ -234,7 +234,7 @@ export function LampiranI() {
                       : <em style={{ color: 'var(--muted)' }}>tidak terbaca</em>}
                   </div>
                   {e.status === 'KONFLIK' && (
-                    <div style={{ marginTop: 5, color: '#92400e' }}>
+                    <div style={{ marginTop: 5, color: 'var(--warn)' }}>
                       Kedua sumber berbeda. Ikuti kolom <strong>Undang-Undang</strong> pada
                       halaman {e.halaman.join(', ')} PDF cetak.
                     </div>

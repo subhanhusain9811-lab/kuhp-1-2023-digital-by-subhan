@@ -46,22 +46,25 @@ export function Dashboard() {
     <div className="konten-dalam anim-up">
       {/* ===== Hero ===== */}
       <section
+        data-hero="panel"
         style={{
           position: 'relative',
           borderRadius: 20,
           padding: '30px 26px 26px',
-          // Lapisan: (1) lapisan gelap di sisi teks agar teks putih ≥4.5:1,
-          // (2) cincin cahaya Telegram-blue di kanan, (3) alas gradien pekat.
+          // Warna diambil dari token agar tema bisa mengendalikannya.
+          // --hero-* ditetapkan di tokens.css (bawaan) dan ditimpa tema.
           background:
-            'linear-gradient(100deg, rgba(8,52,74,.78) 0%, rgba(8,52,74,.55) 38%, rgba(8,52,74,.18) 68%, rgba(8,52,74,0) 100%),'
-            + 'radial-gradient(120% 130% at 88% 6%, rgba(42,171,238,.42) 0%, rgba(42,171,238,.12) 48%, rgba(42,171,238,0) 66%),'
-            + 'radial-gradient(90% 90% at 100% 100%, rgba(42,171,238,.24) 0%, rgba(42,171,238,0) 60%),'
-            + 'linear-gradient(118deg, #0C4460 0%, #14638C 54%, #17749F 100%)',
+            'linear-gradient(100deg, var(--hero-tirai-a) 0%, var(--hero-tirai-b) 38%, var(--hero-tirai-c) 68%, var(--hero-tirai-d) 100%),'
+            + 'radial-gradient(120% 130% at 88% 6%, var(--hero-cahaya-a) 0%, var(--hero-cahaya-b) 48%, transparent 66%),'
+            + 'radial-gradient(90% 90% at 100% 100%, var(--hero-cahaya-c) 0%, transparent 60%),'
+            + 'linear-gradient(118deg, var(--hero-1) 0%, var(--hero-2) 54%, var(--hero-3) 100%)',
           color: '#fff',
           overflow: 'hidden',
-          boxShadow: '0 10px 30px rgba(10, 59, 84, .22)',
+          boxShadow: 'var(--hero-bayang)',
         }}
       >
+        <div className="mozaik-arabesk" aria-hidden="true" />
+        <div className="sinar-lintas" aria-hidden="true" />
         <div aria-hidden="true" style={{
           position: 'absolute', right: -40, top: -60, width: 260, height: 260,
           borderRadius: '50%', border: '1px solid rgba(255,255,255,.14)',
@@ -77,7 +80,7 @@ export function Dashboard() {
             <IkonPerisai size={13} /> Undang-Undang Nomor 1 Tahun 2023
           </div>
 
-          <h1 style={{
+          <h1 data-hero="judul" style={{
             fontSize: 30, lineHeight: 1.14, fontWeight: 800,
             letterSpacing: '-.025em', marginBottom: 8, maxWidth: 620,
           }}>
@@ -91,10 +94,9 @@ export function Dashboard() {
           {/* Kotak pencarian utama */}
           <div style={{ position: 'relative', marginTop: 20, maxWidth: 620 }}>
             <form onSubmit={e => { e.preventDefault(); kirim(q) }}>
-              <div style={{
+              <div className="kotak-cari-hero" style={{
                 display: 'flex', alignItems: 'center', gap: 10,
-                background: '#fff', borderRadius: 13, padding: '4px 4px 4px 14px',
-                boxShadow: '0 6px 20px rgba(0,0,0,.16)',
+                borderRadius: 13, padding: '4px 4px 4px 14px',
               }}>
                 <IkonCari size={19} style={{ color: 'var(--brand-700)', flex: 'none' }} />
                 <input
@@ -102,9 +104,10 @@ export function Dashboard() {
                   onChange={e => setQ(e.target.value)}
                   placeholder="Cari pasal, kata kunci, atau perbuatan hukum…"
                   aria-label="Kotak pencarian utama"
+                  className="isi-cari-hero"
                   style={{
                     flex: 1, minWidth: 0, border: 0, outline: 'none',
-                    fontSize: 15, color: '#16222E', background: 'transparent', padding: '9px 0',
+                    fontSize: 15, background: 'transparent', padding: '9px 0',
                   }}
                 />
                 <button
@@ -461,7 +464,7 @@ function StatAngka({
           color: utama ? 'var(--brand-700)' : 'var(--muted)',
         }}>{label}</span>
       </div>
-      <div style={{
+      <div className="angka-stat" data-utama={utama ? 'ya' : undefined} style={{
         fontSize: 24, fontWeight: 800, letterSpacing: '-.03em', lineHeight: 1.1,
         color: utama ? 'var(--brand-700)' : 'var(--text)',
       }}>
