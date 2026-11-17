@@ -335,6 +335,7 @@ html[data-tema="gelap"] [data-sorot="emas"] {
    13. TOMBOL UTAMA — emas padat dengan teks gelap
    ============================================================ */
 html[data-tema="gelap"] .btn-primary {
+  background-color: #C9A227;
   background-image: linear-gradient(180deg, #E8C25C 0%, #C9A227 62%, #A9861C 100%);
   border-color: #EFCE79;
   color: #16120A;
@@ -434,7 +435,8 @@ html[data-tema="gelap"] h1[data-hero="judul"] {
   background-size: 260% 100%;
   -webkit-background-clip: text;
   background-clip: text;
-  color: transparent;
+  /* warna cadangan bila background-clip tidak didukung */
+  color: #EFCE79;
   -webkit-text-fill-color: transparent;
   animation: emas-pendar 4.2s ease-in-out infinite,
              emas-sapu 7.5s linear infinite;
@@ -748,4 +750,468 @@ html[data-tema="gelap"] .btn:hover {
     animation: none !important;
   }
   html[data-tema="gelap"] .bilah-baca { transform: scaleX(1); opacity: .8; }
+}
+
+/* ============================================================
+   TINGKAT EMPAT — "PENUH"
+   Batas terjauh sebelum aplikasi berubah jadi permainan.
+   Semua tetap patuh pada prefers-reduced-motion.
+   ============================================================ */
+
+/* ---------- 32. SUDUT EMAS — bingkai sertifikat ---------- */
+@keyframes sudut-nyala {
+  0%, 100% { opacity: .72; filter: drop-shadow(0 0 6px rgba(224, 185, 79, .65)); }
+  50%      { opacity: 1;   filter: drop-shadow(0 0 14px rgba(251, 240, 203, .95)); }
+}
+
+html[data-tema="gelap"] .sudut-emas {
+  position: absolute;
+  inset: 11px;
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 13px;
+  --l: 26px;
+  --t: 2px;
+  background-image:
+    linear-gradient(#FBF0CB, #FBF0CB), linear-gradient(#FBF0CB, #FBF0CB),
+    linear-gradient(#FBF0CB, #FBF0CB), linear-gradient(#FBF0CB, #FBF0CB),
+    linear-gradient(#FBF0CB, #FBF0CB), linear-gradient(#FBF0CB, #FBF0CB),
+    linear-gradient(#FBF0CB, #FBF0CB), linear-gradient(#FBF0CB, #FBF0CB);
+  background-repeat: no-repeat;
+  background-size:
+    var(--l) var(--t), var(--t) var(--l),
+    var(--l) var(--t), var(--t) var(--l),
+    var(--l) var(--t), var(--t) var(--l),
+    var(--l) var(--t), var(--t) var(--l);
+  background-position:
+    left top, left top,
+    right top, right top,
+    left bottom, left bottom,
+    right bottom, right bottom;
+  animation: sudut-nyala 3.6s ease-in-out infinite;
+}
+
+/* ---------- 33. TEPI BAWAH TOPBAR — garis emas menyala ---------- */
+html[data-tema="gelap"] header.topbar {
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(224, 185, 79, .22), 0 10px 30px -22px rgba(224, 185, 79, .75);
+}
+
+/* ---------- 34. PEMILIHAN TEKS — emas ---------- */
+html[data-tema="gelap"] ::selection {
+  background: rgba(224, 185, 79, .55);
+  color: #0B0A08;
+  text-shadow: none;
+}
+
+/* ---------- 35. KURSOR KOLOM ISI — emas ---------- */
+html[data-tema="gelap"] input,
+html[data-tema="gelap"] textarea {
+  caret-color: #E0B94F;
+}
+
+/* ---------- 36. CINCIN FOKUS — ganda, terang ---------- */
+html[data-tema="gelap"] :focus-visible {
+  outline: 2px solid #FBF0CB;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px rgba(201, 162, 39, .32), 0 0 26px -4px rgba(224, 185, 79, .9);
+}
+
+/* ---------- 37. SENTUHAN TOMBOL — riak emas ---------- */
+@keyframes riak-emas {
+  from { box-shadow: 0 0 0 0 rgba(251, 240, 203, .75), 0 0 30px -6px rgba(224,185,79,.9); }
+  to   { box-shadow: 0 0 0 14px rgba(251, 240, 203, 0), 0 0 30px -6px rgba(224,185,79,.2); }
+}
+
+html[data-tema="gelap"] .btn:active,
+html[data-tema="gelap"] button:active {
+  animation: riak-emas .5s ease-out;
+}
+
+/* ---------- 38. KARTU — kilau melintas di permukaan ---------- */
+@keyframes kartu-kilau {
+  0%   { transform: translateX(-160%) skewX(-20deg); opacity: 0; }
+  22%  { opacity: .55; }
+  60%  { opacity: .22; }
+  100% { transform: translateX(260%) skewX(-20deg); opacity: 0; }
+}
+
+html[data-tema="gelap"] .card { position: relative; overflow: hidden; }
+
+html[data-tema="gelap"] .card::before {
+  content: '';
+  position: absolute;
+  top: -30%; bottom: -30%;
+  left: 0;
+  width: 36%;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent, rgba(251, 240, 203, .26) 45%, rgba(255, 255, 255, .40) 52%, transparent);
+  filter: blur(6px);
+  animation: kartu-kilau 11s cubic-bezier(.4,0,.2,1) infinite;
+}
+
+html[data-tema="gelap"] .card:nth-child(2n)::before { animation-delay: -3.4s; }
+html[data-tema="gelap"] .card:nth-child(3n)::before { animation-delay: -6.8s; }
+html[data-tema="gelap"] .card:nth-child(5n)::before { animation-delay: -9.1s; }
+
+/* ---------- 39. KISI BERLIAN DI LATAR ---------- */
+@keyframes kisi-geser {
+  0%   { background-position: 0 0, 0 0; }
+  100% { background-position: 84px 84px, -84px 84px; }
+}
+
+html[data-tema="gelap"] .app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: .16;
+  background-image:
+    repeating-linear-gradient(45deg,
+      rgba(201, 162, 39, .30) 0 1px, transparent 1px 42px),
+    repeating-linear-gradient(-45deg,
+      rgba(201, 162, 39, .22) 0 1px, transparent 1px 42px);
+  mask-image: radial-gradient(90% 70% at 50% 0%, #000 0%, transparent 78%);
+  -webkit-mask-image: radial-gradient(90% 70% at 50% 0%, #000 0%, transparent 78%);
+  animation: kisi-geser 60s linear infinite;
+}
+
+/* ---------- 40. JUDUL BAGIAN — garis tumbuh ---------- */
+@keyframes garis-tumbuh {
+  from { width: 0; opacity: 0; }
+  to   { width: 46px; opacity: 1; }
+}
+
+html[data-tema="gelap"] h2::after {
+  animation: garis-tumbuh .9s cubic-bezier(.4,0,.2,1) both;
+  box-shadow: 0 0 14px rgba(224, 185, 79, .85), 0 0 30px -6px rgba(201, 162, 39, .7);
+}
+
+/* ---------- 41. CHIP TERPILIH — terangkat ----------
+   CATATAN PENTING: jangan mengecat semua button[aria-pressed="true"] dengan
+   emas padat. Tombol bergaya `Segmen` (mis. pemilih tema Normal/Sedang/Gelap)
+   memakai aria-pressed untuk pilihan yang SUDAH aktif; mengecatnya emas
+   membuat teksnya gelap di atas latar gelap → kontras 1.01:1.
+   Karena itu hanya `Chip` (berkelas .chip) yang dicaat emas padat. */
+html[data-tema="gelap"] button.chip[aria-pressed="true"],
+html[data-tema="gelap"] button.chip-brand[aria-pressed="true"] {
+  transform: translateY(-1px);
+  color: #16120A !important;
+  background-image: linear-gradient(180deg, #EFCE79 0%, #C9A227 100%) !important;
+  border-color: #FBF0CB !important;
+  box-shadow: 0 0 22px -6px rgba(224, 185, 79, .95), inset 0 1px 0 rgba(255,255,255,.5);
+  font-weight: 700;
+}
+
+html[data-tema="gelap"] button[aria-pressed="true"].btn {
+  border-color: var(--emas-400) !important;
+  color: var(--emas-100) !important;
+  background-image: linear-gradient(180deg, rgba(224, 185, 79, .20), rgba(201, 162, 39, .10)) !important;
+  box-shadow: 0 0 16px -8px rgba(224, 185, 79, .9), inset 0 0 14px -10px rgba(251,240,203,.7);
+  font-weight: 700;
+}
+
+/* ---------- 42. TABEL / BARIS BERGANTIAN — pendar tipis ---------- */
+html[data-tema="gelap"] tr:nth-child(2n) {
+  background-color: rgba(201, 162, 39, .035);
+}
+
+/* ---------- 43. SAAT DIMUAT — sapuan emas sekali ---------- */
+@keyframes masuk-emas {
+  from { opacity: 0; transform: translateY(8px); filter: saturate(.4) brightness(.7); }
+  to   { opacity: 1; transform: translateY(0);   filter: saturate(1) brightness(1); }
+}
+
+html[data-tema="gelap"] .konten-dalam {
+  animation: masuk-emas .5s cubic-bezier(.4,0,.2,1) both;
+}
+
+/* ---------- 44. HORMATI PREFERENSI GERAK ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html[data-tema="gelap"] .sudut-emas,
+  html[data-tema="gelap"] .card::before,
+  html[data-tema="gelap"] .app::before,
+  html[data-tema="gelap"] h2::after,
+  html[data-tema="gelap"] .konten-dalam,
+  html[data-tema="gelap"] .btn:active,
+  html[data-tema="gelap"] button:active {
+    animation: none !important;
+  }
+  html[data-tema="gelap"] h2::after { width: 46px; }
+  html[data-tema="gelap"] .app::before { opacity: .08; }
+}
+
+/* ============================================================
+   MODE TERANG — "PERKAMEN & EMAS"
+   Sebelumnya tema emas HANYA aktif di mode gelap, sehingga pengguna
+   yang memakai mode terang tidak melihat perubahan apa pun.
+   Sekarang identitas emas berlaku di kedua mode:
+   · gelap  → Tinta & Emas (dasar hampir hitam)
+   · terang → Perkamen & Emas (dasar krem hangat)
+   ============================================================ */
+
+html[data-tema="terang"] {
+  /* ---- Emas (nada lebih tua agar terbaca di atas krem) ---- */
+  --emas-100: #FFF8E2;
+  --emas-200: #F7E9BE;
+  --emas-300: #E8D28A;
+  --emas-400: #C9A93F;
+  --emas-500: #A9861C;
+  --emas-600: #8A6D12;
+  --emas-700: #6B5310;
+
+  /* ---- Pemetaan brand ---- */
+  --brand-50:  #FBF3DC;
+  --brand-100: #F6E9C6;
+  --brand-200: #EBD79B;
+  --brand-300: #DCC06C;
+  --brand-400: #C9A93F;
+  --brand-500: #A9861C;
+  --brand-600: #8A6D12;
+  --brand-700: #6F5610;   /* teks aksen di atas krem: 5.4:1 */
+  --brand-800: #4F3D0B;
+
+  /* ---- Dasar hangat ---- */
+  --bg:            #FAF6EC;
+  --surface:       #FFFDF7;
+  --surface-2:     #F5EFE0;
+  --surface-3:     #EDE4D0;
+  --text:          #241C10;
+  --text-soft:     #3D3223;
+  --muted:         #6E6350;
+  --border:        #E2D7BF;
+  --border-strong: #CDBE9F;
+
+  /* ---- Status, diselaraskan ke nada hangat ---- */
+  --ok:        #0B6E4A;
+  --ok-bg:     #E3F6EE;
+  --warn:      #8A4E08;
+  --warn-bg:   #FDF2E3;
+  --danger:    #A32A22;
+  --danger-bg: #FBEAE8;
+
+  /* ---- Cahaya (lebih halus di atas krem) ---- */
+  --glow-sm: 0 0 12px -4px rgba(169, 134, 28, .38);
+  --glow-md: 0 0 22px -8px rgba(169, 134, 28, .45);
+  --glow-lg: 0 0 44px -16px rgba(169, 134, 28, .50);
+
+  /* ---- Hero: perunggu pekat (teks putih tetap terbaca) ---- */
+  --hero-tirai-a: rgba(48,36,10,.86);
+  --hero-tirai-b: rgba(48,36,10,.60);
+  --hero-tirai-c: rgba(48,36,10,.18);
+  --hero-tirai-d: rgba(48,36,10,0);
+  --hero-cahaya-a: rgba(247,233,190,.40);
+  --hero-cahaya-b: rgba(247,233,190,.12);
+  --hero-cahaya-c: rgba(201,169,63,.22);
+  --hero-1: #2B2110;
+  --hero-2: #4A3A18;
+  --hero-3: #6B5310;
+  --hero-bayang: 0 12px 34px rgba(60, 45, 12, .26),
+                 0 0 0 1px rgba(169, 134, 28, .28),
+                 0 0 44px -18px rgba(169, 134, 28, .60);
+  --hero-kotak-bg: #FFFDF7;
+  --hero-kotak-teks: #241C10;
+  --hero-kotak-bayang: 0 6px 20px rgba(60,45,12,.20), 0 0 0 1px rgba(169,134,28,.25);
+
+  /* tombol utama — emas, bukan biru */
+  --aksen-1: #A9861C;
+  --aksen-2: #8A6D12;
+  --aksen-3: #6B5310;
+}
+
+/* latar perkamen + kabut emas tipis */
+html[data-tema="terang"] body {
+  background-color: #FAF6EC;
+  background-image:
+    radial-gradient(1000px 560px at 16% -10%, rgba(201, 169, 63, .16), transparent 62%),
+    radial-gradient(700px 480px at 94% 2%, rgba(232, 210, 138, .14), transparent 60%),
+    radial-gradient(900px 640px at 50% 116%, rgba(169, 134, 28, .07), transparent 66%);
+  background-attachment: fixed;
+}
+
+/* sidebar */
+html[data-tema="terang"] aside,
+html[data-tema="terang"] .sidebar {
+  background-image: linear-gradient(180deg, #FFFDF7 0%, #F7F1E2 100%);
+  border-right: 1px solid var(--border);
+  box-shadow: 1px 0 0 rgba(169, 134, 28, .14), 10px 0 36px -30px rgba(169, 134, 28, .55);
+}
+
+html[data-tema="terang"] aside a[aria-current="page"],
+html[data-tema="terang"] aside .nav-aktif {
+  background-image: linear-gradient(95deg, rgba(169, 134, 28, .18), rgba(169, 134, 28, .04));
+  box-shadow: inset 2px 0 0 var(--emas-500), var(--glow-sm);
+  color: var(--emas-700) !important;
+}
+
+/* judul & tautan */
+html[data-tema="terang"] h1[data-hero="judul"] {
+  background-image: linear-gradient(100deg, #6B5310 0%, #A9861C 42%, #C9A93F 68%, #8A6D12 100%);
+  background-size: 240% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  /* warna cadangan: bila background-clip tidak didukung, teks tetap terbaca */
+  color: var(--brand-700);
+  -webkit-text-fill-color: transparent;
+  animation: emas-sapu 9s linear infinite;
+}
+
+html[data-tema="terang"] h2 { color: var(--brand-700); }
+html[data-tema="terang"] a { color: var(--brand-700); }
+
+html[data-tema="terang"] h2::after {
+  content: '';
+  position: absolute;
+  left: 0; bottom: 0;
+  width: 46px; height: 2px;
+  border-radius: 2px;
+  background-image: linear-gradient(90deg, var(--emas-500), rgba(169, 134, 28, 0));
+  box-shadow: 0 0 10px rgba(169, 134, 28, .55);
+}
+html[data-tema="terang"] h2 { position: relative; padding-bottom: 6px; }
+
+/* kartu */
+html[data-tema="terang"] .card {
+  background-image: linear-gradient(180deg, #FFFDF7 0%, #FDF9EF 100%);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--dur) var(--ease),
+              box-shadow var(--dur) var(--ease),
+              transform var(--dur) var(--ease);
+}
+
+html[data-tema="terang"] .card::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 1px;
+  background-image: linear-gradient(90deg, transparent,
+    rgba(201, 169, 63, .95) 50%, transparent);
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: emas-sapu-tepi 7s linear infinite;
+  opacity: .70;
+}
+
+html[data-tema="terang"] .card:hover {
+  border-color: rgba(169, 134, 28, .55);
+  box-shadow: var(--shadow-md), 0 0 22px -8px rgba(169, 134, 28, .55);
+  transform: translateY(-1px);
+}
+
+/* tombol */
+html[data-tema="terang"] .btn-primary {
+  background-color: #A9861C;   /* cadangan bila gradien tidak tampil */
+  background-image: linear-gradient(180deg, #D9BA4E 0%, #A9861C 62%, #8A6D12 100%);
+  border-color: #8A6D12;
+  color: #241C10;              /* teks gelap di atas emas: 4.8:1 */
+  font-weight: 700;
+  box-shadow: 0 0 16px -6px rgba(169, 134, 28, .70), inset 0 1px 0 rgba(255,255,255,.35);
+}
+
+html[data-tema="terang"] .btn-primary:hover {
+  background-image: linear-gradient(180deg, #E5C862 0%, #B8931F 62%, #96771A 100%);
+  box-shadow: 0 0 24px -6px rgba(169, 134, 28, .85);
+}
+
+html[data-tema="terang"] .btn:hover {
+  border-color: rgba(169, 134, 28, .55);
+  color: var(--brand-700);
+  box-shadow: var(--glow-sm);
+}
+
+/* kolom isian */
+html[data-tema="terang"] input:focus,
+html[data-tema="terang"] textarea:focus,
+html[data-tema="terang"] select:focus {
+  outline: none;
+  border-color: var(--emas-500);
+  box-shadow: 0 0 0 3px rgba(169, 134, 28, .16);
+}
+
+html[data-tema="terang"] .kotak-cari-hero {
+  background: #FFFDF7 !important;
+  box-shadow: 0 6px 20px rgba(60,45,12,.20), 0 0 0 1px rgba(169,134,28,.28) !important;
+}
+
+/* chip terpilih */
+html[data-tema="terang"] button.chip[aria-pressed="true"],
+html[data-tema="terang"] button.chip-brand[aria-pressed="true"] {
+  background-image: linear-gradient(180deg, #D9BA4E 0%, #A9861C 100%) !important;
+  border-color: #8A6D12 !important;
+  color: #FFFDF7 !important;
+  font-weight: 700;
+}
+
+html[data-tema="terang"] button[aria-pressed="true"].btn {
+  border-color: var(--emas-500) !important;
+  color: var(--brand-700) !important;
+  background-image: linear-gradient(180deg, rgba(201,169,63,.22), rgba(169,134,28,.10)) !important;
+  font-weight: 700;
+}
+
+/* pemisah & guliran */
+html[data-tema="terang"] hr {
+  border: 0; height: 1px;
+  background-image: linear-gradient(90deg, transparent, rgba(169, 134, 28, .42), transparent);
+}
+
+html[data-tema="terang"] ::-webkit-scrollbar { width: 10px; height: 10px; }
+html[data-tema="terang"] ::-webkit-scrollbar-track { background: #F1EAD8; }
+html[data-tema="terang"] ::-webkit-scrollbar-thumb {
+  background-image: linear-gradient(180deg, #C9A93F, #A9861C);
+  border-radius: 999px; border: 2px solid #F1EAD8;
+}
+
+/* seleksi & fokus */
+html[data-tema="terang"] ::selection {
+  background: rgba(201, 169, 63, .55);
+  color: #241C10;
+}
+
+html[data-tema="terang"] :focus-visible {
+  outline: 2px solid var(--emas-600);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(169, 134, 28, .22);
+}
+
+/* angka statistik */
+html[data-tema="terang"] .angka-stat {
+  color: var(--brand-700);
+  text-shadow: 0 0 12px rgba(169, 134, 28, .22);
+}
+
+html[data-tema="terang"] .angka-stat[data-utama="ya"] {
+  color: #6B5310;
+  text-shadow: 0 0 18px rgba(169, 134, 28, .38);
+}
+
+/* hero: bingkai sudut & topbar */
+
+/* judul di dalam hero: hero berlatar perunggu gelap,
+   jadi judul harus memakai emas TERANG agar kontras */
+html[data-tema="terang"] section[data-hero="panel"] h1[data-hero="judul"] {
+  background-image: linear-gradient(100deg, #FFF8E2 0%, #F7E9BE 38%, #E8D28A 62%, #C9A93F 100%);
+  /* di atas perunggu gelap: cadangan emas terang */
+  color: #F7E9BE;
+}
+
+html[data-tema="terang"] .sudut-emas { filter: brightness(.78) saturate(1.1); }
+
+html[data-tema="terang"] header.topbar {
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(169, 134, 28, .26), 0 10px 28px -24px rgba(169, 134, 28, .70);
+}
+
+/* motes & kisi: terlalu ramai di atas krem — dimatikan */
+html[data-tema="terang"] body::before,
+html[data-tema="terang"] .app::before { display: none; }
+
+/* kurangi animasi berat di mode terang agar tetap tenang */
+@media (prefers-reduced-motion: reduce) {
+  html[data-tema="terang"] h1[data-hero="judul"],
+  html[data-tema="terang"] .card::after { animation: none !important; }
 }

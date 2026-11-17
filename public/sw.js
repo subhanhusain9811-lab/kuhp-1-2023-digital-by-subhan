@@ -7,7 +7,7 @@
    Aplikasi sepenuhnya statis; tidak ada permintaan ke server data.
    ============================================================ */
 
-const VERSI = 'kuhp-v1.0.0'
+const VERSI = 'kuhp-v1.2.0'
 const SHELL = `${VERSI}-shell`
 const ASET = `${VERSI}-aset`
 
@@ -63,17 +63,24 @@ self.addEventListener('fetch', (event) => {
     return
   }
 
-  // Aset statis (js/css/svg/ikon) -> cache first
+  // Aset statis (js/css/svg/ikon) -> stale-while-revalidate.
+  // Versi lama memakai cache-first murni: setelah deploy, peramban terus
+  // menyajikan CSS/JS lama sehingga perubahan tidak pernah terlihat.
   event.respondWith(
     caches.match(req).then(hit => {
-      if (hit) return hit
-      return fetch(req).then(res => {
+      const jaringan = fetch(req).then(res => {
         if (res.ok && (url.pathname.startsWith(`${AKAR}assets/`) || url.pathname.startsWith(`${AKAR}icons/`))) {
           const salinan = res.clone()
           caches.open(ASET).then(c => c.put(req, salinan)).catch(() => undefined)
         }
         return res
-      }).catch(() => Response.error())
+      }).catch(() => undefined)
+
+      if (hit) {
+        event.waitUntil(jaringan)   // perbarui diam-diam untuk permintaan berikutnya
+        return hit
+      }
+      return jaringan.then(res => res ?? Response.error())
     }),
   )
 })

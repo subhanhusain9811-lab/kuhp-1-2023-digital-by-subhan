@@ -132,6 +132,11 @@ const kontras = await p.evaluate(() => {
     if (!txt || txt.length < 3 || el.children.length > 0) continue
     const cs = getComputedStyle(el)
     if (cs.visibility === 'hidden' || cs.display === 'none' || parseFloat(cs.opacity) < 0.5) continue
+    /* Teks bergradien (background-clip: text) diwarnai oleh background-image,
+       bukan oleh `color`. `color` hanya warna cadangan, jadi mengukurnya
+       menghasilkan positif palsu. Lewati elemen seperti ini. */
+    const clip = cs.webkitBackgroundClip || cs.backgroundClip
+    if (clip === 'text') continue
     const fgRaw = parseRGBA(cs.color)
     if (!fgRaw) continue
     const bg = latar(el)
@@ -178,6 +183,11 @@ const kontrasGelap = await p.evaluate(() => {
     if (!txt || txt.length < 3 || el.children.length > 0) continue
     const cs = getComputedStyle(el)
     if (cs.visibility === 'hidden' || cs.display === 'none') continue
+    /* Teks bergradien (background-clip: text) diwarnai oleh background-image,
+       bukan oleh `color`. Mengukur `color` di sini menghasilkan positif palsu,
+       karena `color` hanyalah warna cadangan. Lewati elemen seperti ini. */
+    const clip = cs.webkitBackgroundClip || cs.backgroundClip
+    if (clip === 'text') continue
     const fg = parse(cs.color); if (!fg) continue
     const bg = latar(el)
     const L1 = lum(fg), L2 = lum(bg)
